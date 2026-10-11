@@ -1,41 +1,41 @@
 {
-  "probedAt": "2026-10-10T10:36:43.042Z",
-  "registryEntries": 41407,
-  "registryWithRemote": 26210,
-  "probed": 26210,
+  "probedAt": "2026-10-11T10:41:44.739Z",
+  "registryEntries": 41784,
+  "registryWithRemote": 26507,
+  "probed": 26507,
   "byStatus": {
-    "ok": 14288,
-    "auth": 6837,
-    "protocol_error": 1699,
-    "not_found": 953,
-    "dns": 696,
+    "ok": 14457,
+    "auth": 6943,
+    "protocol_error": 1697,
+    "not_found": 958,
+    "dns": 704,
     "payment": 442,
-    "server_error": 324,
-    "tls": 272,
-    "rate_limited": 231,
-    "timeout": 188,
-    "newer_protocol": 130,
-    "error": 122,
+    "server_error": 307,
+    "tls": 276,
+    "rate_limited": 259,
+    "timeout": 185,
+    "newer_protocol": 131,
+    "error": 120,
     "refused": 28
   },
-  "reachable": 21697,
-  "ok": 14288,
-  "uniqueToolsets": 13673,
-  "duplicateServers": 615,
+  "reachable": 21973,
+  "ok": 14457,
+  "uniqueToolsets": 13829,
+  "duplicateServers": 628,
   "protocols": {
-    "2025-11-25": 8594,
-    "2025-03-26": 3135,
-    "2025-06-18": 2009,
-    "2024-11-05": 499,
-    "unknown": 51
+    "2025-11-25": 8730,
+    "2025-03-26": 3166,
+    "2025-06-18": 2004,
+    "2024-11-05": 505,
+    "unknown": 52
   },
   "authSchemes": {
-    "Bearer": 5851,
-    "none": 961,
+    "Bearer": 5947,
+    "none": 972,
     "ApiKey": 10,
     "AzureApiManagementKey": 6,
     "OAuth": 2,
-    "Basic": 2,
+    "Basic": 1,
     "Key": 1,
     "Api-Key": 1,
     "x-access-key": 1,
@@ -43,36 +43,36 @@
     "RoseMember": 1
   },
   "transports": {
-    "streamable-http": 25472,
-    "sse": 738
+    "streamable-http": 25770,
+    "sse": 737
   },
   "toolsTokens": {
     "median": 1735,
     "p90": 7429,
-    "p99": 30440,
+    "p99": 30580,
     "max": 537158,
-    "total": 63446145
+    "total": 64036709
   },
   "claudeTokens": {
     "model": "claude-opus-5-5",
-    "counted": 14040,
-    "refused": 240,
-    "median": 2935,
+    "counted": 14207,
+    "refused": 241,
+    "median": 2934,
     "p90": 13050,
-    "p99": 49126,
+    "p99": 48325,
     "max": 915450,
-    "total": 105400666,
+    "total": 106354161,
     "claudeCode": {
-      "median": 3028,
-      "p90": 13482,
-      "p99": 49893,
+      "median": 3027,
+      "p90": 13515,
+      "p99": 49582,
       "max": 921778,
-      "total": 107916185
+      "total": 108902495
     },
     "ratioToEstimate": {
-      "median": 1.7568004309183949,
-      "p10": 1.6339994763941008,
-      "p90": 1.8481212503946953
+      "median": 1.7567713246193235,
+      "p10": 1.6325524044389643,
+      "p90": 1.8483516483516484
     }
   },
   "toolCount": {
@@ -81,10 +81,10 @@
     "max": 2000
   },
   "initMs": {
-    "median": 1218,
-    "p90": 3141
+    "median": 869,
+    "p90": 2397
   },
-  "hosts": 18260,
+  "hosts": 18513,
   "heaviest": [
     {
       "name": "info.astroway/astrology",
@@ -104,18 +104,18 @@
     },
     {
       "name": "io.github.whiteknightonhorse/apibase",
-      "toolCount": 1411,
-      "toolsTokens": 348975,
-      "claudeTokens": 597314,
-      "claudeTokensCc": 608602,
+      "toolCount": 1406,
+      "toolsTokens": 347287,
+      "claudeTokens": 594451,
+      "claudeTokensCc": 605699,
       "host": "apibase.pro"
     },
     {
       "name": "net.crawlora/crawlora-mcp",
       "toolCount": 2000,
-      "toolsTokens": 335405,
-      "claudeTokens": 583565,
-      "claudeTokensCc": 609565,
+      "toolsTokens": 338139,
+      "claudeTokens": 588403,
+      "claudeTokensCc": 614403,
       "host": "mcp.crawlora.net"
     },
     {
@@ -137,18 +137,10 @@
     {
       "name": "io.github.Invaro/opentax",
       "toolCount": 15,
-      "toolsTokens": 175279,
-      "claudeTokens": 293598,
-      "claudeTokensCc": 293718,
+      "toolsTokens": 175588,
+      "claudeTokens": 294076,
+      "claudeTokensCc": 294196,
       "host": "opentax.invaro.ai"
-    },
-    {
-      "name": "info.astroway/vedic",
-      "toolCount": 193,
-      "toolsTokens": 168772,
-      "claudeTokens": 285887,
-      "claudeTokensCc": 287431,
-      "host": "mcp.astroway.info"
     },
     {
       "name": "io.github.duvoai/duvo",
@@ -191,12 +183,28 @@
       "host": "synergieloc.fr"
     },
     {
+      "name": "ar.mueblito/mueblito",
+      "toolCount": 10,
+      "toolsTokens": 87424,
+      "claudeTokens": 164105,
+      "claudeTokensCc": 164195,
+      "host": "www.mueblito.ar"
+    },
+    {
       "name": "io.github.yzlee/opcmenu",
       "toolCount": 396,
       "toolsTokens": 95927,
       "claudeTokens": 162049,
       "claudeTokensCc": 166009,
       "host": "mcp.opcmenu.com"
+    },
+    {
+      "name": "dev.tanod/tanod",
+      "toolCount": 207,
+      "toolsTokens": 93473,
+      "claudeTokens": 152644,
+      "claudeTokensCc": 154300,
+      "host": "tanod.dev"
     },
     {
       "name": "io.github.hermoso-ai/hermoso",
@@ -221,14 +229,6 @@
       "claudeTokens": 143072,
       "claudeTokensCc": 146882,
       "host": "livedatalink.ai"
-    },
-    {
-      "name": "dev.tanod/tanod",
-      "toolCount": 194,
-      "toolsTokens": 85852,
-      "claudeTokens": 140366,
-      "claudeTokensCc": 141918,
-      "host": "tanod.dev"
     },
     {
       "name": "ai.zerowidth/zerowidth",
