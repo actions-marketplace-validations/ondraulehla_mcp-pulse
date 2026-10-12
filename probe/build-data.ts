@@ -9,6 +9,7 @@
  */
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import type { ProbeResult, RegistryEntry } from '../packages/mcptop/src/index.js';
 
@@ -16,7 +17,9 @@ const { values: args } = parseArgs({
   options: {
     in: { type: 'string' },
     registry: { type: 'string', default: 'data/raw/registry-latest.json' },
-    out: { type: 'string', default: 'data/latest' }
+    out: { type: 'string', default: 'data/latest' },
+    /** servers.json of the previous run, for the list of what changed since then. */
+    previous: { type: 'string' }
   }
 });
 if (!args.in) throw new Error('--in <probe run json> is required');
@@ -139,6 +142,57 @@ const quantile = (xs: number[], q: number) => {
   return sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * q))];
 };
 
+/**
+ * What changed since the previous run: servers that appeared or left the
+ * registry, that went down or came back, and whose tool definitions grew or
+ * shrank by a fifth and at least 500 tokens. The exact Claude count is used
+ * when both runs have it, the estimate otherwise.
+ */
+export interface Changes {
+  since: string;
+  added: Array<{ name: string; status: string; tokens?: number }>;
+  removed: string[];
+  wentDown: Array<{ name: string; from: string; to: string }>;
+  cameBack: Array<{ name: string; from: string; to: string }>;
+  tokenChanges: Array<{ name: string; before: number; after: number; exact: boolean }>;
+  counts: { added: number; removed: number; wentDown: number; cameBack: number; tokenChanges: number };
+}
+const LIVE = new Set(['ok', 'auth', 'payment', 'newer_protocol']);
+function diffRuns(previousRows: ServerRow[], current: ServerRow[]): Changes {
+  const prev = new Map(previousRows.map((r) => [r.name, r]));
+  const now = new Map(current.map((r) => [r.name, r]));
+  const since = previousRows.reduce((a, r) => (r.probedAt > a ? r.probedAt : a), '');
+  const added = current.filter((r) => !prev.has(r.name)).map((r) => ({ name: r.name, status: r.status, tokens: r.claudeTokens ?? r.toolsTokens }));
+  const removed = previousRows.filter((r) => !now.has(r.name)).map((r) => r.name);
+  const wentDown: Changes['wentDown'] = [];
+  const cameBack: Changes['cameBack'] = [];
+  const tokenChanges: Changes['tokenChanges'] = [];
+  for (const r of current) {
+    const p = prev.get(r.name);
+    if (!p) continue;
+    if (LIVE.has(p.status) && !LIVE.has(r.status)) wentDown.push({ name: r.name, from: p.status, to: r.status });
+    if (!LIVE.has(p.status) && LIVE.has(r.status)) cameBack.push({ name: r.name, from: p.status, to: r.status });
+    const exact = p.claudeTokens != null && r.claudeTokens != null;
+    const before = exact ? p.claudeTokens! : p.toolsTokens;
+    const after = exact ? r.claudeTokens! : r.toolsTokens;
+    if (before != null && after != null && p.status === 'ok' && r.status === 'ok') {
+      const delta = Math.abs(after - before);
+      if (delta >= 500 && delta >= 0.2 * Math.max(before, 1)) tokenChanges.push({ name: r.name, before, after, exact });
+    }
+  }
+  tokenChanges.sort((a, b) => Math.abs(b.after - b.before) - Math.abs(a.after - a.before));
+  added.sort((a, b) => (b.tokens ?? -1) - (a.tokens ?? -1));
+  const cap = <T>(xs: T[]) => xs.slice(0, 60);
+  return {
+    since,
+    added: cap(added), removed: cap(removed), wentDown: cap(wentDown), cameBack: cap(cameBack), tokenChanges: cap(tokenChanges),
+    counts: { added: added.length, removed: removed.length, wentDown: wentDown.length, cameBack: cameBack.length, tokenChanges: tokenChanges.length }
+  };
+}
+
+const previousRows = args.previous && existsSync(args.previous) ? (JSON.parse(await readFile(args.previous, 'utf8')) as ServerRow[]) : null;
+const changes = previousRows ? diffRuns(previousRows, rows) : undefined;
+
 const ok = rows.filter((r) => r.status === 'ok');
 const tokens = ok.map((r) => r.toolsTokens ?? 0);
 const counted = ok.filter((r) => r.claudeTokens != null);
@@ -176,6 +230,7 @@ const summary = {
   toolCount: { median: quantile(ok.map((r) => r.toolCount ?? 0), 0.5), p90: quantile(ok.map((r) => r.toolCount ?? 0), 0.9), max: Math.max(0, ...ok.map((r) => r.toolCount ?? 0)) },
   initMs: { median: quantile(ok.map((r) => r.initMs ?? 0), 0.5), p90: quantile(ok.map((r) => r.initMs ?? 0), 0.9) },
   hosts: new Set(rows.map((r) => r.host)).size,
+  changes,
   heaviest: [...ok].sort((a, b) => weight(b) - weight(a)).slice(0, 20).map((r) => ({ name: r.name, toolCount: r.toolCount, toolsTokens: r.toolsTokens, claudeTokens: r.claudeTokens, claudeTokensCc: r.claudeTokensCc, host: r.host }))
 };
 

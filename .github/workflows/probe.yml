@@ -57,7 +57,11 @@ jobs:
           fi
       - name: Build the site data and the D1 import
         run: |
-          node --import tsx probe/build-data.ts --in data/raw/probe-run.json --out data/latest
+          if [ -f data/previous/servers.json ]; then
+            node --import tsx probe/build-data.ts --in data/raw/probe-run.json --out data/latest --previous data/previous/servers.json
+          else
+            node --import tsx probe/build-data.ts --in data/raw/probe-run.json --out data/latest
+          fi
           if [ -f data/previous/servers.json ]; then
             node --import tsx probe/to-sql.ts --in data/latest --out data/latest/import.sql --previous data/previous/servers.json --previous-hosts data/previous/hosts.json
           else

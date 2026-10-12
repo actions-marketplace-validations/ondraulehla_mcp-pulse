@@ -92,6 +92,22 @@ export interface RunSummary {
   initMs: { median: number; p90: number };
   hosts: number;
   heaviest: Array<{ name: string; toolCount: number; toolsTokens: number; claudeTokens?: number; claudeTokensCc?: number; host: string }>;
+  /** What changed since the previous run; absent on the first run. */
+  changes?: {
+    since: string;
+    added: Array<{ name: string; status: string; tokens?: number }>;
+    removed: string[];
+    wentDown: Array<{ name: string; from: string; to: string }>;
+    cameBack: Array<{ name: string; from: string; to: string }>;
+    tokenChanges: Array<{ name: string; before: number; after: number; exact: boolean }>;
+    counts: { added: number; removed: number; wentDown: number; cameBack: number; tokenChanges: number };
+  };
+}
+
+/** The last runs, newest first, for the changes page and its feed. */
+export async function recentRuns(limit = 14): Promise<RunSummary[]> {
+  const { results } = await db().prepare('SELECT summary FROM runs ORDER BY probed_at DESC LIMIT ?').bind(limit).all<{ summary: string }>();
+  return results.map((r) => JSON.parse(r.summary) as RunSummary);
 }
 
 /** The headline numbers: exact Claude counts when the run has them, else the estimate. */

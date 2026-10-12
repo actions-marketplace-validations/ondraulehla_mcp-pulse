@@ -1,0 +1,105 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { recentRuns } from '../lib/db';
+import { bucket, label, num, date } from '../lib/format';
+
+const runs = (await recentRuns(14)).filter((r) => r.changes);
+Astro.response.headers.set('cache-control', 'public, max-age=300, s-maxage=10800');
+const sign = (n: number) => (n > 0 ? `+${num(n)}` : num(n));
+---
+
+<Layout title="What changed" description="Servers that joined or left the MCP registry, went down or came back, and whose tool definitions grew or shrank, run by run.">
+  <p class="kicker">daily diff · <a href="/changes.xml">atom feed</a></p>
+  <h1 class="poster">What changed</h1>
+  <p class="lede">Each run against the one before it. New and removed servers, servers that stopped or started answering, and tool sets that grew or shrank by a fifth and at least 500 tokens.</p>
+
+  {runs.length === 0 && <p class="frame pad">The first comparison appears after the next run.</p>}
+
+  {runs.map((run) => {
+    const c = run.changes!;
+    return (
+      <section class="run">
+        <h2 id={date(run.probedAt)}>{date(run.probedAt)} <span class="muted small">since {c.since.slice(0, 16).replace('T', ' ')} UTC</span></h2>
+        <div class="stats">
+          <div class="stat"><b>{num(c.counts.added)}</b><span>new in the registry</span></div>
+          <div class="stat"><b>{num(c.counts.removed)}</b><span>removed</span></div>
+          <div class="stat"><b>{num(c.counts.wentDown)}</b><span>stopped answering</span></div>
+          <div class="stat"><b>{num(c.counts.cameBack)}</b><span>answer again</span></div>
+          <div class="stat"><b>{num(c.counts.tokenChanges)}</b><span>tool sets grew or shrank</span></div>
+        </div>
+
+        {c.tokenChanges.length > 0 && (
+          <>
+            <h3>Tool sets that changed most</h3>
+            <div class="frame">
+              <table>
+                <thead><tr><th>Server</th><th class="num">Before</th><th class="num">After</th><th class="num">Change</th></tr></thead>
+                <tbody>
+                  {c.tokenChanges.slice(0, 25).map((t) => (
+                    <tr>
+                      <td class="break"><a href={`/s/${t.name}`}>{t.name}</a>{!t.exact && <span class="sub">o200k estimate</span>}</td>
+                      <td class="num">{num(t.before)}</td>
+                      <td class="num">{num(t.after)}</td>
+                      <td class={`num ${t.after > t.before ? 'worse' : 'better'}`}>{sign(t.after - t.before)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        {c.wentDown.length > 0 && (
+          <>
+            <h3>Stopped answering</h3>
+            <ul class="cols">
+              {c.wentDown.slice(0, 40).map((s) => <li><a href={`/s/${s.name}`}>{s.name}</a> <span class={`tag ${bucket(s.to)}`}>{label(s.to)}</span></li>)}
+              {c.counts.wentDown > 40 && <li class="muted">and {num(c.counts.wentDown - 40)} more</li>}
+            </ul>
+          </>
+        )}
+
+        {c.cameBack.length > 0 && (
+          <>
+            <h3>Answer again</h3>
+            <ul class="cols">
+              {c.cameBack.slice(0, 40).map((s) => <li><a href={`/s/${s.name}`}>{s.name}</a> <span class={`tag ${bucket(s.to)}`}>{label(s.to)}</span></li>)}
+              {c.counts.cameBack > 40 && <li class="muted">and {num(c.counts.cameBack - 40)} more</li>}
+            </ul>
+          </>
+        )}
+
+        {c.added.length > 0 && (
+          <>
+            <h3>New in the registry</h3>
+            <ul class="cols">
+              {c.added.slice(0, 40).map((s) => <li><a href={`/s/${s.name}`}>{s.name}</a> <span class={`tag ${bucket(s.status)}`}>{label(s.status)}</span>{s.tokens != null && <span class="faint"> {num(s.tokens)} tokens</span>}</li>)}
+              {c.counts.added > 40 && <li class="muted">and {num(c.counts.added - 40)} more</li>}
+            </ul>
+          </>
+        )}
+
+        {c.removed.length > 0 && (
+          <>
+            <h3>Removed from the registry</h3>
+            <ul class="cols">
+              {c.removed.slice(0, 40).map((n) => <li class="mono">{n}</li>)}
+              {c.counts.removed > 40 && <li class="muted">and {num(c.counts.removed - 40)} more</li>}
+            </ul>
+          </>
+        )}
+      </section>
+    );
+  })}
+</Layout>
+
+<style is:global>
+  .run { margin-top: 44px; }
+  .run h2 { margin-bottom: 0; }
+  .run h3 { margin: 26px 0 8px; font-size: 1rem; }
+  ul.cols { columns: 2; column-gap: 32px; margin: 0; padding-left: 1.1em; font-size: 0.92rem; }
+  ul.cols li { break-inside: avoid; margin: 0 0 4px; overflow-wrap: anywhere; }
+  td.worse { color: var(--accent); }
+  td.better { color: var(--up); }
+  @media (max-width: 640px) { ul.cols { columns: 1; } }
+</style>
