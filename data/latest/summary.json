@@ -1,37 +1,37 @@
 {
-  "probedAt": "2026-10-11T10:41:44.739Z",
-  "registryEntries": 41784,
-  "registryWithRemote": 26507,
-  "probed": 26507,
+  "probedAt": "2026-10-12T12:03:15.932Z",
+  "registryEntries": 42317,
+  "registryWithRemote": 26943,
+  "probed": 26943,
   "byStatus": {
-    "ok": 14457,
-    "auth": 6943,
-    "protocol_error": 1697,
-    "not_found": 958,
-    "dns": 704,
-    "payment": 442,
-    "server_error": 307,
-    "tls": 276,
-    "rate_limited": 259,
-    "timeout": 185,
-    "newer_protocol": 131,
-    "error": 120,
-    "refused": 28
+    "ok": 14759,
+    "auth": 7073,
+    "protocol_error": 1690,
+    "not_found": 965,
+    "dns": 711,
+    "payment": 447,
+    "server_error": 314,
+    "tls": 275,
+    "timeout": 226,
+    "rate_limited": 201,
+    "newer_protocol": 129,
+    "error": 119,
+    "refused": 34
   },
-  "reachable": 21973,
-  "ok": 14457,
-  "uniqueToolsets": 13829,
-  "duplicateServers": 628,
+  "reachable": 22408,
+  "ok": 14759,
+  "uniqueToolsets": 14079,
+  "duplicateServers": 680,
   "protocols": {
-    "2025-11-25": 8730,
-    "2025-03-26": 3166,
-    "2025-06-18": 2004,
+    "2025-11-25": 8913,
+    "2025-03-26": 3162,
+    "2025-06-18": 2127,
     "2024-11-05": 505,
     "unknown": 52
   },
   "authSchemes": {
-    "Bearer": 5947,
-    "none": 972,
+    "Bearer": 6067,
+    "none": 982,
     "ApiKey": 10,
     "AzureApiManagementKey": 6,
     "OAuth": 2,
@@ -43,36 +43,36 @@
     "RoseMember": 1
   },
   "transports": {
-    "streamable-http": 25770,
+    "streamable-http": 26206,
     "sse": 737
   },
   "toolsTokens": {
-    "median": 1735,
+    "median": 1734,
     "p90": 7429,
-    "p99": 30580,
+    "p99": 30304,
     "max": 537158,
-    "total": 64036709
+    "total": 65562095
   },
   "claudeTokens": {
     "model": "claude-opus-5-5",
-    "counted": 14207,
-    "refused": 241,
-    "median": 2934,
+    "counted": 14497,
+    "refused": 252,
+    "median": 2933,
     "p90": 13050,
-    "p99": 48325,
-    "max": 915450,
-    "total": 106354161,
+    "p99": 48534,
+    "max": 944524,
+    "total": 109017733,
     "claudeCode": {
-      "median": 3027,
+      "median": 3026,
       "p90": 13515,
-      "p99": 49582,
-      "max": 921778,
-      "total": 108902495
+      "p99": 49621,
+      "max": 945084,
+      "total": 111597862
     },
     "ratioToEstimate": {
-      "median": 1.7567713246193235,
-      "p10": 1.6325524044389643,
-      "p90": 1.8483516483516484
+      "median": 1.7567676767676768,
+      "p10": 1.6329686360320934,
+      "p90": 1.8481212503946953
     }
   },
   "toolCount": {
@@ -81,11 +81,19 @@
     "max": 2000
   },
   "initMs": {
-    "median": 869,
-    "p90": 2397
+    "median": 1193,
+    "p90": 3263
   },
-  "hosts": 18513,
+  "hosts": 18904,
   "heaviest": [
+    {
+      "name": "com.replynodes/mcp",
+      "toolCount": 70,
+      "toolsTokens": 492267,
+      "claudeTokens": 944524,
+      "claudeTokensCc": 945084,
+      "host": "mcp.replynodes.com"
+    },
     {
       "name": "info.astroway/astrology",
       "toolCount": 791,
@@ -96,26 +104,26 @@
     },
     {
       "name": "co.ainumbers/tools",
-      "toolCount": 733,
-      "toolsTokens": 350525,
-      "claudeTokens": 613146,
-      "claudeTokensCc": 618277,
+      "toolCount": 734,
+      "toolsTokens": 351016,
+      "claudeTokens": 614003,
+      "claudeTokensCc": 619141,
       "host": "mcp.ainumbers.co"
     },
     {
       "name": "io.github.whiteknightonhorse/apibase",
-      "toolCount": 1406,
-      "toolsTokens": 347287,
-      "claudeTokens": 594451,
-      "claudeTokensCc": 605699,
+      "toolCount": 1420,
+      "toolsTokens": 350646,
+      "claudeTokens": 600248,
+      "claudeTokensCc": 611608,
       "host": "apibase.pro"
     },
     {
       "name": "net.crawlora/crawlora-mcp",
       "toolCount": 2000,
-      "toolsTokens": 338139,
-      "claudeTokens": 588403,
-      "claudeTokensCc": 614403,
+      "toolsTokens": 340875,
+      "claudeTokens": 592593,
+      "claudeTokensCc": 618593,
       "host": "mcp.crawlora.net"
     },
     {
@@ -127,12 +135,12 @@
       "host": "api.wellapp.ai"
     },
     {
-      "name": "ai.oobeprotocol.sap.mcp/sap-mcp",
-      "toolCount": 453,
-      "toolsTokens": 178444,
-      "claudeTokens": 317425,
-      "claudeTokensCc": 322408,
-      "host": "mcp.sap.oobeprotocol.ai"
+      "name": "app.soclo/soclo-mcp",
+      "toolCount": 409,
+      "toolsTokens": 181475,
+      "claudeTokens": 331535,
+      "claudeTokensCc": 336443,
+      "host": "mcp.soclo.app"
     },
     {
       "name": "io.github.Invaro/opentax",
@@ -141,6 +149,14 @@
       "claudeTokens": 294076,
       "claudeTokensCc": 294196,
       "host": "opentax.invaro.ai"
+    },
+    {
+      "name": "info.astroway/vedic",
+      "toolCount": 193,
+      "toolsTokens": 168772,
+      "claudeTokens": 285887,
+      "claudeTokensCc": 287431,
+      "host": "mcp.astroway.info"
     },
     {
       "name": "io.github.duvoai/duvo",
@@ -175,6 +191,14 @@
       "host": "mcp.lovie.co"
     },
     {
+      "name": "dev.tanod/tanod",
+      "toolCount": 224,
+      "toolsTokens": 105225,
+      "claudeTokens": 170771,
+      "claudeTokensCc": 172563,
+      "host": "tanod.dev"
+    },
+    {
       "name": "fr.synergieloc/immobilier",
       "toolCount": 70,
       "toolsTokens": 100284,
@@ -199,14 +223,6 @@
       "host": "mcp.opcmenu.com"
     },
     {
-      "name": "dev.tanod/tanod",
-      "toolCount": 207,
-      "toolsTokens": 93473,
-      "claudeTokens": 152644,
-      "claudeTokensCc": 154300,
-      "host": "tanod.dev"
-    },
-    {
       "name": "io.github.hermoso-ai/hermoso",
       "toolCount": 185,
       "toolsTokens": 91444,
@@ -215,36 +231,20 @@
       "host": "app.hermoso.ai"
     },
     {
+      "name": "ai.zerowidth/zerowidth",
+      "toolCount": 259,
+      "toolsTokens": 88057,
+      "claudeTokens": 149577,
+      "claudeTokensCc": 152167,
+      "host": "api.zerowidth.ai"
+    },
+    {
       "name": "info.astroway/core",
       "toolCount": 105,
       "toolsTokens": 83530,
       "claudeTokens": 143943,
       "claudeTokensCc": 144573,
       "host": "mcp.astroway.info"
-    },
-    {
-      "name": "io.github.blackboxfoundry/livedatalink",
-      "toolCount": 381,
-      "toolsTokens": 81256,
-      "claudeTokens": 143072,
-      "claudeTokensCc": 146882,
-      "host": "livedatalink.ai"
-    },
-    {
-      "name": "ai.zerowidth/zerowidth",
-      "toolCount": 248,
-      "toolsTokens": 79096,
-      "claudeTokens": 135722,
-      "claudeTokensCc": 138202,
-      "host": "api.zerowidth.ai"
-    },
-    {
-      "name": "ai.intuitek.the-stall/the-stall",
-      "toolCount": 302,
-      "toolsTokens": 77539,
-      "claudeTokens": 131963,
-      "claudeTokensCc": 134681,
-      "host": "the-stall.intuitek.ai"
     }
   ]
 }
