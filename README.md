@@ -25,6 +25,17 @@ npx mcptop --claude            # exact counts from the Anthropic count_tokens en
 
 It starts every configured server the way your client does, lists the tools and prints the token cost per server and in total. See [packages/mcptop](packages/mcptop/README.md).
 
+### In CI, as a GitHub Action
+
+```yaml
+- uses: ondraulehla/mcp-pulse@main
+  with:
+    config: .mcp.json   # one or more config files, one per line
+    budget: 30000       # fail when the tool definitions cost more than this
+```
+
+The job summary gets a table with every server, its result and its cost, plus the most expensive tools. A pull request that adds a 40 000-token server fails the check. Set `claude: true` and put `ANTHROPIC_API_KEY` in `env` for exact counts from the free count_tokens endpoint; the default is the o200k_base estimate. Outputs: `tokens`, `servers`, `over-budget`.
+
 ## The board
 
 [mcp-pulse.ulehla.dev](https://mcp-pulse.ulehla.dev) is rendered on the edge from a D1 database, ships no JavaScript, and refreshes every night.

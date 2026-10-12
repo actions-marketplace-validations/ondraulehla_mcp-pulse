@@ -1,0 +1,6 @@
+{
+  "mcpServers": {
+    "deepwiki": { "type": "http", "url": "https://mcp.deepwiki.com/mcp" },
+    "mcp-pulse": { "type": "http", "url": "https://mcp-pulse.ulehla.dev/mcp" }
+  }
+}

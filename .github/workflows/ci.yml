@@ -16,3 +16,25 @@ jobs:
       - run: npx tsc -p packages/mcptop/tsconfig.json --noEmit
       - run: npm test --workspaces --if-present
       - run: npm run build -w site
+  action:
+    name: the GitHub Action against two public servers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - id: budget
+        uses: ./
+        with:
+          config: .github/examples/mcp-budget.json
+          budget: 5000
+      - run: 'echo "tokens=${{ steps.budget.outputs.tokens }} servers=${{ steps.budget.outputs.servers }} over=${{ steps.budget.outputs.over-budget }}"'
+      - name: the action fails above the budget
+        id: fail
+        continue-on-error: true
+        uses: ./
+        with:
+          config: .github/examples/mcp-budget.json
+          budget: 10
+      - run: test "${{ steps.fail.outcome }}" = failure

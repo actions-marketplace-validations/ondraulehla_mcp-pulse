@@ -1,0 +1,79 @@
+name: 'mcptop: token budget for MCP servers'
+description: 'Measures what the MCP servers in a config cost in context tokens, writes a job summary, and fails the job when the total is above a budget.'
+author: 'Ondřej Úlehla'
+branding:
+  icon: 'activity'
+  color: 'orange'
+inputs:
+  config:
+    description: 'Path to the MCP config file (.mcp.json, Cursor, VS Code or Claude Desktop format). Repeat lines for several files.'
+    required: false
+    default: '.mcp.json'
+  budget:
+    description: 'Fail when the total token cost is above this number. Empty means report only.'
+    required: false
+    default: ''
+  window:
+    description: 'Context window the percentages refer to.'
+    required: false
+    default: '200000'
+  tools:
+    description: 'How many of the most expensive tools to list for each server.'
+    required: false
+    default: '3'
+  claude:
+    description: 'Exact counts from the Anthropic count_tokens endpoint (free, calls no model). Needs ANTHROPIC_API_KEY in env.'
+    required: false
+    default: 'false'
+  no-stdio:
+    description: 'Do not start local (stdio) servers, measure remote ones only.'
+    required: false
+    default: 'false'
+  version:
+    description: 'mcptop version to run.'
+    required: false
+    default: 'latest'
+outputs:
+  tokens:
+    description: 'Total tokens of all measured servers.'
+    value: ${{ steps.run.outputs.tokens }}
+  servers:
+    description: 'How many servers were measured.'
+    value: ${{ steps.run.outputs.servers }}
+  over-budget:
+    description: '"true" when the total is above the budget.'
+    value: ${{ steps.run.outputs.over-budget }}
+runs:
+  using: 'composite'
+  steps:
+    - id: run
+      shell: bash
+      env:
+        INPUT_CONFIG: ${{ inputs.config }}
+        INPUT_BUDGET: ${{ inputs.budget }}
+        INPUT_WINDOW: ${{ inputs.window }}
+        INPUT_TOOLS: ${{ inputs.tools }}
+        INPUT_CLAUDE: ${{ inputs.claude }}
+        INPUT_NO_STDIO: ${{ inputs.no-stdio }}
+        INPUT_VERSION: ${{ inputs.version }}
+      run: |
+        set -euo pipefail
+        args=()
+        while IFS= read -r f; do [ -n "$f" ] && args+=(--config "$f"); done <<< "$INPUT_CONFIG"
+        [ "$INPUT_CLAUDE" = "true" ] && args+=(--claude)
+        [ "$INPUT_NO_STDIO" = "true" ] && args+=(--no-stdio)
+        args+=(--window "$INPUT_WINDOW" --tools "$INPUT_TOOLS" --json)
+        npx -y "mcptop@$INPUT_VERSION" "${args[@]}" > mcptop.json
+        node "$GITHUB_ACTION_PATH/.github/actions/summary.mjs" mcptop.json "$INPUT_BUDGET" >> "$GITHUB_STEP_SUMMARY"
+        total=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("mcptop.json","utf8")).total.tokens)')
+        servers=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("mcptop.json","utf8")).total.servers)')
+        echo "tokens=$total" >> "$GITHUB_OUTPUT"
+        echo "servers=$servers" >> "$GITHUB_OUTPUT"
+        over=false
+        if [ -n "$INPUT_BUDGET" ] && [ "$total" -gt "$INPUT_BUDGET" ]; then over=true; fi
+        echo "over-budget=$over" >> "$GITHUB_OUTPUT"
+        echo "mcptop: $servers servers, $total tokens$( [ -n "$INPUT_BUDGET" ] && echo ", budget $INPUT_BUDGET" )"
+        if [ "$over" = true ]; then
+          echo "::error title=MCP token budget::The tool definitions cost $total tokens, the budget is $INPUT_BUDGET."
+          exit 1
+        fi
