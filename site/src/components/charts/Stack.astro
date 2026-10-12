@@ -1,0 +1,34 @@
+---
+/**
+ * One stacked bar for a part-to-whole with a few segments: 2 px surface gaps
+ * between segments, a legend that names every segment with its count, hover
+ * lifts a segment and shows its tooltip.
+ */
+interface Segment {
+  label: string;
+  value: number;
+  tone: 'up' | 'gated' | 'down';
+  href?: string;
+}
+interface Props {
+  segments: Segment[];
+  id: string;
+}
+const { segments, id } = Astro.props;
+const total = Math.max(1, segments.reduce((a, s) => a + s.value, 0));
+const fmt = (n: number) => n.toLocaleString('en-US').replace(/,/g, ' ');
+const pct = (n: number) => `${Math.round((n / total) * 100)} %`;
+---
+
+<figure class="chart stack" id={id}>
+  <div class="stack-bar" role="img" aria-label={segments.map((s) => `${s.label} ${fmt(s.value)}`).join(', ')}>
+    {segments.map((s) => (
+      <span class={`seg ${s.tone}`} style={`flex-basis:${(s.value / total) * 100}%`} tabindex="0" data-tip={`${s.label}: ${fmt(s.value)} (${pct(s.value)})`}></span>
+    ))}
+  </div>
+  <ul class="legend">
+    {segments.map((s) => (
+      <li><i class={s.tone}></i>{s.href ? <a href={s.href}>{s.label}</a> : s.label} <b>{pct(s.value)}</b> <span class="faint">{fmt(s.value)}</span></li>
+    ))}
+  </ul>
+</figure>

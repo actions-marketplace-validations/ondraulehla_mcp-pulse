@@ -35,11 +35,19 @@ const canonical = new URL(path + Astro.url.search, Astro.site ?? Astro.url).toSt
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title === 'mcp-pulse' ? 'mcp-pulse' : `${title} · mcp-pulse`}</title>
+    <script is:inline>
+      // Before paint: the stored choice, else the system setting. No flash of the wrong theme.
+      (function () {
+        var t = null;
+        try { t = localStorage.getItem('theme'); } catch (e) {}
+        document.documentElement.dataset.theme = t === 'light' || t === 'dark' ? t : matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      })();
+    </script>
     <meta name="description" content={description} />
     <link rel="alternate" type="application/atom+xml" title={feed?.title ?? 'mcp-pulse: what changed'} href={feed?.href ?? '/changes.xml'} />
     {robots && <meta name="robots" content={robots} />}
@@ -76,8 +84,19 @@ const canonical = new URL(path + Astro.url.search, Astro.site ?? Astro.url).toSt
         ))}
         <a href="https://github.com/ondraulehla/mcp-pulse" rel="noopener" class="cell cell-flood">GitHub</a>
         <a href="https://www.npmjs.com/package/mcptop" rel="noopener" class="cell cell-flood wide">npx mcptop</a>
+        <button type="button" class="cell cell-flood theme-toggle" data-theme-toggle aria-label="Switch between light and dark" title="Light / dark">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
+        </button>
       </nav>
     </header>
+    <script is:inline>
+      document.querySelector('[data-theme-toggle]').addEventListener('click', function () {
+        var next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = next;
+        try { localStorage.setItem('theme', next); } catch (e) {}
+      });
+    </script>
     <main>
       <slot />
     </main>
@@ -111,6 +130,9 @@ const canonical = new URL(path + Astro.url.search, Astro.site ?? Astro.url).toSt
     --up-soft: oklch(92% 0.05 150);
     --gated: oklch(50% 0.09 250);
     --gated-soft: oklch(92% 0.03 250);
+    --chart-up: oklch(52% 0.13 150);
+    --chart-gated: oklch(50% 0.12 250);
+    --chart-accent: oklch(55% 0.19 38);
     --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     --font-display: var(--font-sans);
     --font-poster: 'Anton', Impact, 'Arial Narrow Bold', sans-serif;
@@ -118,8 +140,8 @@ const canonical = new URL(path + Astro.url.search, Astro.site ?? Astro.url).toSt
     --gutter: clamp(16px, 4vw, 40px);
     color-scheme: light;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
+  /* Dark: the stored choice, or the system setting when nothing is stored. Chart hues are a separate, validated set. */
+  :root[data-theme="dark"] {
       --surface: oklch(17% 0.008 65);
       --panel: oklch(21% 0.01 65);
       --ink: oklch(93% 0.012 80);
@@ -133,10 +155,96 @@ const canonical = new URL(path + Astro.url.search, Astro.site ?? Astro.url).toSt
       --up-soft: oklch(26% 0.05 150);
       --gated: oklch(72% 0.09 250);
       --gated-soft: oklch(26% 0.04 250);
+      --chart-up: oklch(66% 0.14 150);
+      --chart-gated: oklch(66% 0.12 250);
+      --chart-accent: oklch(66% 0.17 38);
+      color-scheme: dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --surface: oklch(17% 0.008 65);
+      --panel: oklch(21% 0.01 65);
+      --ink: oklch(93% 0.012 80);
+      --ink-muted: oklch(70% 0.016 70);
+      --ink-faint: oklch(55% 0.016 65);
+      --line: oklch(29% 0.012 65);
+      --accent: oklch(70% 0.17 38);
+      --accent-strong: oklch(77% 0.15 45);
+      --accent-soft: oklch(27% 0.05 45);
+      --up: oklch(72% 0.14 150);
+      --up-soft: oklch(26% 0.05 150);
+      --gated: oklch(72% 0.09 250);
+      --gated-soft: oklch(26% 0.04 250);
+      --chart-up: oklch(66% 0.14 150);
+      --chart-gated: oklch(66% 0.12 250);
+      --chart-accent: oklch(66% 0.17 38);
       color-scheme: dark;
     }
   }
   * { box-sizing: border-box; }
+  /* theme toggle: the sun shows in the dark (click for light), the moon in the light */
+  .theme-toggle { width: 3.4rem; padding: 0; border: 0; border-left: 1px solid var(--line); background: transparent; color: var(--ink-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font: inherit; }
+  .theme-toggle svg { width: 1.1rem; height: 1.1rem; }
+  .theme-toggle .icon-sun { display: none; }
+  :root[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+  :root[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+
+  /* charts: thin marks, one hue per series, hover lifts the mark and shows its tooltip, a table under each */
+  .chart { margin: 14px 0 8px; }
+  .chart [data-tip] { position: relative; outline: none; }
+  .chart [data-tip]::after { content: attr(data-tip); position: absolute; left: 0; bottom: calc(100% + 6px); z-index: 2; padding: 5px 8px; border: 1px solid var(--line); background: var(--ink); color: var(--surface); font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.04em; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.12s; }
+  .chart [data-tip]:hover::after, .chart [data-tip]:focus-visible::after { opacity: 1; }
+  .chart-table { margin: 6px 0 0; font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); }
+  .chart-table summary { cursor: pointer; width: max-content; }
+  .chart-table summary:hover { color: var(--accent); }
+  .chart-table table { margin-top: 8px; text-transform: none; letter-spacing: 0; font-family: var(--font-sans); font-size: 0.9rem; color: var(--ink); width: 100%; border: 1px solid var(--line); }
+  .bars ol { list-style: none; margin: 0; padding: 0; }
+  .bars .bar { display: grid; grid-template-columns: minmax(120px, 34%) 1fr; gap: 12px; align-items: center; padding: 5px 0; border-top: 1px solid var(--line); }
+  .bars .bar:first-child { border-top: 0; }
+  .bars .bar-label { font-size: 0.9rem; overflow-wrap: anywhere; line-height: 1.25; }
+  .bars .bar-label small { display: block; color: var(--ink-faint); font-size: 0.74rem; }
+  .bars .bar-track { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .bars .bar-fill { display: block; height: 18px; max-width: calc(100% - 64px); background: var(--chart-accent); border-radius: 0 4px 4px 0; transition: filter 0.12s; }
+  .bars .bar.up .bar-fill { background: var(--chart-up); }
+  .bars .bar.gated .bar-fill { background: var(--chart-gated); }
+  .bars .bar.down .bar-fill { background: var(--chart-accent); }
+  .bars .bar:hover .bar-fill, .bars .bar:focus-visible .bar-fill { filter: brightness(1.15); }
+  .bars .bar-value { font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .stack-bar { display: flex; gap: 2px; height: 22px; background: var(--line); }
+  .stack-bar .seg { display: block; flex: 0 0 auto; min-width: 2px; transition: filter 0.12s; }
+  .stack-bar .seg:hover, .stack-bar .seg:focus-visible { filter: brightness(1.15); }
+  .seg.up, .legend i.up { background: var(--chart-up); }
+  .seg.gated, .legend i.gated { background: var(--chart-gated); }
+  .seg.down, .legend i.down { background: var(--chart-accent); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 22px; list-style: none; margin: 10px 0 0; padding: 0; font-size: 0.9rem; color: var(--ink-muted); }
+  .legend i { display: inline-block; width: 12px; height: 12px; margin-right: 7px; vertical-align: -1px; }
+  .legend b { font-weight: 600; color: var(--ink); margin-left: 4px; }
+  .histogram ol { display: grid; grid-template-columns: repeat(var(--cols), 1fr); gap: 2px; list-style: none; margin: 0; padding: 0; height: 220px; }
+  .histogram .col { display: grid; grid-template-rows: auto 1fr auto; gap: 6px; text-align: center; }
+  .histogram .col-track { display: flex; align-items: flex-end; }
+  .histogram .col-fill { display: block; width: 100%; max-width: 48px; margin: 0 auto; background: var(--chart-accent); border-radius: 4px 4px 0 0; transition: filter 0.12s; }
+  .histogram .col:hover .col-fill, .histogram .col:focus-visible .col-fill { filter: brightness(1.15); }
+  .histogram .col-value { font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+  .histogram .col-label { font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.04em; color: var(--ink-faint); white-space: nowrap; }
+  .histogram [data-tip]::after { left: 50%; transform: translateX(-50%); }
+  .trend svg { width: 100%; height: auto; display: block; font-family: var(--font-mono); }
+  .trend .grid line { stroke: var(--line); stroke-width: 1; }
+  .trend .grid text, .trend .axis { fill: var(--ink-faint); font-size: 11px; }
+  .trend .line { fill: none; stroke: var(--chart-accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .trend .hit { fill: transparent; }
+  .trend .ring { fill: var(--surface); }
+  .trend .dot { fill: var(--chart-accent); transition: r 0.12s; }
+  .trend .pt { outline: none; cursor: default; }
+  .trend .pt:hover .dot, .trend .pt:focus-visible .dot { r: 5.5; }
+  .trend .tip { fill: var(--ink); font-size: 11px; opacity: 0; pointer-events: none; paint-order: stroke; stroke: var(--surface); stroke-width: 4px; }
+  .trend .pt:hover .tip, .trend .pt:focus-visible .tip { opacity: 1; }
+  .trend .end { fill: var(--ink); font-size: 12px; font-weight: 600; }
+  @media (max-width: 640px) {
+    .bars .bar { grid-template-columns: 1fr; gap: 4px; }
+    .histogram ol { height: 160px; }
+    .histogram .col-label { font-size: 0.52rem; }
+    .chart [data-tip]::after { white-space: normal; max-width: 70vw; }
+  }
   html { background: var(--surface); color: var(--ink); font-family: var(--font-sans); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
   body { margin: 0; min-height: 100svh; display: flex; flex-direction: column; }
   a { color: inherit; text-decoration: none; }

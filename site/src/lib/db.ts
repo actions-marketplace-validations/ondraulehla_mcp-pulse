@@ -87,6 +87,8 @@ export interface RunSummary {
     refused: number;
     claudeCode: TokenStats;
     ratioToEstimate: { median: number; p10: number; p90: number };
+    /** Alive servers per cost band: bins[i] holds counts below edges[i]; the last bin is the rest. */
+    histogram?: { edges: number[]; bins: number[] };
   };
   toolCount: { median: number; p90: number; max: number };
   initMs: { median: number; p90: number };

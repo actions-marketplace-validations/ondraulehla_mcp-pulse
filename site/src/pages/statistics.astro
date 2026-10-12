@@ -1,154 +1,107 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { latestRun, listHosts } from '../lib/db';
-import { bucket, label, num, pct, tokens, date, ms, modelName } from '../lib/format';
+import Bars from '../components/charts/Bars.astro';
+import Stack from '../components/charts/Stack.astro';
+import Trend from '../components/charts/Trend.astro';
+import Histogram from '../components/charts/Histogram.astro';
+import { latestRun, listHosts, recentRuns } from '../lib/db';
+import { bucket, label, num, pct, date, ms, modelName } from '../lib/format';
 
-const run = await latestRun();
-const hosts = run ? await listHosts(15) : [];
-Astro.response.headers.set('cache-control', 'public, max-age=300, s-maxage=3600');
-const statusRows = run ? Object.entries(run.byStatus).sort((a, b) => b[1] - a[1]) : [];
+const runs = await recentRuns(30);
+const run = runs[0] ?? null;
+const hosts = run ? await listHosts(12) : [];
+Astro.response.headers.set('cache-control', 'public, max-age=300, s-maxage=10800');
+
+const gated = run ? (run.byStatus.auth ?? 0) + (run.byStatus.payment ?? 0) + (run.byStatus.newer_protocol ?? 0) : 0;
+const down = run ? run.probed - run.ok - gated : 0;
+const statusItems = run
+  ? Object.entries(run.byStatus).sort((a, b) => b[1] - a[1]).map(([s, n]) => ({ label: label(s), value: n, tone: bucket(s), href: `/servers?status=${s}`, note: pct(n, run.probed) }))
+  : [];
+const series = [...runs].reverse();
+const trend = (pick: (r: (typeof runs)[number]) => number | undefined) =>
+  series.flatMap((r) => { const v = pick(r); return v == null ? [] : [{ date: r.probedAt, value: v }]; });
+const topHeavy = run ? run.heaviest.slice(0, 12) : [];
+const heavyMax = Math.max(1, ...topHeavy.map((h) => h.claudeTokens ?? h.toolsTokens));
 ---
 
-<Layout title="Statistics">
+<Layout title="Statistics" description="Results, token costs, protocols, auth and publishers of every remote server in the MCP registry, as charts with a table under each.">
   <p class="kicker">{run ? `${num(run.probed)} remote servers · probed ${date(run.probedAt)}` : ''}</p>
   <h1 class="poster">Statistics</h1>
 
   {!run && <p class="frame pad">No run imported yet.</p>}
   {run && (
     <>
-      <h2>Registry</h2>
       <div class="stats">
-        <div class="stat"><b>{num(run.registryEntries)}</b><span>entries, latest versions</span></div>
-        <div class="stat"><b>{num(run.registryWithRemote)}</b><span>with a remote endpoint</span></div>
-        <div class="stat"><b>{num(run.probed)}</b><span>probed</span></div>
+        <div class="stat"><b>{num(run.registryEntries)}</b><span>registry entries, latest versions</span></div>
+        <div class="stat"><b>{num(run.probed)}</b><span>with a remote endpoint, probed</span></div>
         <div class="stat"><b>{num(run.hosts)}</b><span>hosts</span></div>
         <div class="stat"><b>{num(run.uniqueToolsets)}</b><span>distinct tool sets among alive servers</span></div>
-        <div class="stat"><b>{num(run.duplicateServers)}</b><span>alive servers with the same tool set as another server</span></div>
+        <div class="stat"><b>{num(run.duplicateServers)}</b><span>alive servers that copy another tool set</span></div>
+        <div class="stat"><b>{ms(run.initMs.median)}</b><span>median time to initialize</span></div>
       </div>
 
       <h2>Results</h2>
-      <div class="frame">
-        <table>
-          <thead><tr><th>Result</th><th class="num">Servers</th><th class="num">Share</th><th></th></tr></thead>
-          <tbody>
-            {statusRows.map(([status, n]) => (
-              <tr>
-                <td><span class={`tag ${bucket(status)}`}>{label(status)}</span></td>
-                <td class="num">{num(n)}</td>
-                <td class="num">{pct(n, run.probed)}</td>
-                <td><a href={`/servers?status=${status}`}>list</a></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <p class="muted small">What every probed server answered. Hover a segment or a bar for the count, or open the table.</p>
+      <Stack id="results-stack" segments={[
+        { label: 'alive', value: run.ok, tone: 'up', href: '/servers?status=ok' },
+        { label: 'needs auth or payment', value: gated, tone: 'gated', href: '/servers?status=auth' },
+        { label: 'down or broken', value: down, tone: 'down', href: '/servers?status=down' }
+      ]} />
+      <Bars id="results-bars" items={statusItems} columns={['Result', 'Servers']} />
 
       {run.claudeTokens && (
         <>
-          <h2>Token cost of tool definitions in {modelName(run.claudeTokens.model)}, alive servers</h2>
-          <p class="muted small">Exact counts from the Anthropic count_tokens endpoint. {num(run.claudeTokens.counted)} servers counted. {num(run.claudeTokens.refused)} servers have a schema the API refuses.</p>
+          <h2>Token cost in {modelName(run.claudeTokens.model)}, alive servers</h2>
+          <p class="muted small">Exact counts from the Anthropic count_tokens endpoint. {num(run.claudeTokens.counted)} servers counted, {num(run.claudeTokens.refused)} have a schema the API refuses.</p>
           <div class="stats">
             <div class="stat"><b>{num(run.claudeTokens.median)}</b><span>median</span></div>
             <div class="stat"><b>{num(run.claudeTokens.p90)}</b><span>90th percentile</span></div>
             <div class="stat"><b>{num(run.claudeTokens.p99)}</b><span>99th percentile</span></div>
-            <div class="stat"><b>{tokens(run.claudeTokens.max)}</b><span>maximum</span></div>
-            <div class="stat"><b>{num(run.claudeTokens.claudeCode.median)}</b><span>median in Claude Code (mcp__ prefix)</span></div>
-            <div class="stat"><b>{run.claudeTokens.ratioToEstimate.median.toFixed(2)}×</b><span>exact count over the o200k estimate, median</span></div>
+            <div class="stat"><b>{num(run.claudeTokens.max)}</b><span>maximum</span></div>
+            <div class="stat"><b>{num(run.claudeTokens.claudeCode.median)}</b><span>median in Claude Code</span></div>
+            <div class="stat"><b>{run.claudeTokens.ratioToEstimate.median.toFixed(2)}×</b><span>exact over the o200k estimate</span></div>
           </div>
+          {run.claudeTokens.histogram && (
+            <>
+              <h3>Servers per cost band</h3>
+              <Histogram id="cost-histogram" edges={run.claudeTokens.histogram.edges} bins={run.claudeTokens.histogram.bins} />
+            </>
+          )}
         </>
       )}
 
-      <h2>o200k_base estimate, alive servers</h2>
-      <div class="stats">
-        <div class="stat"><b>{num(run.toolsTokens.median)}</b><span>median</span></div>
-        <div class="stat"><b>{num(run.toolsTokens.p90)}</b><span>90th percentile</span></div>
-        <div class="stat"><b>{num(run.toolsTokens.p99)}</b><span>99th percentile</span></div>
-        <div class="stat"><b>{tokens(run.toolsTokens.max)}</b><span>maximum</span></div>
-        <div class="stat"><b>{num(run.toolCount.median)}</b><span>median tools per server</span></div>
-        <div class="stat"><b>{num(run.toolCount.max)}</b><span>most tools on one server</span></div>
-      </div>
-
       <h2>Heaviest tool sets</h2>
-      <div class="frame">
-        <table>
-          <thead><tr><th>Server</th><th>Host</th><th class="num">Tools</th><th class="num">Claude</th><th class="num">Claude Code</th><th class="num">o200k</th><th class="num">Of 200k</th></tr></thead>
-          <tbody>
-            {run.heaviest.map((s) => (
-              <tr>
-                <td class="break"><a href={`/s/${s.name}`}>{s.name}</a></td>
-                <td class="mono faint break">{s.host}</td>
-                <td class="num">{num(s.toolCount)}</td>
-                <td class="num">{num(s.claudeTokens)}</td>
-                <td class="num">{num(s.claudeTokensCc)}</td>
-                <td class="num faint">{num(s.toolsTokens)}</td>
-                <td class="num">{(((s.claudeTokens ?? s.toolsTokens) / 200_000) * 100).toFixed(1)} %</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Bars id="heaviest" max={heavyMax} items={topHeavy.map((h) => ({
+        label: h.name, sub: `${num(h.toolCount)} tools · ${h.host}`, href: `/s/${h.name}`,
+        value: h.claudeTokens ?? h.toolsTokens, note: h.claudeTokens != null ? `${((h.claudeTokens / 200_000) * 100).toFixed(0)} % of a 200k window` : 'o200k estimate'
+      }))} columns={['Server', 'Tokens']} />
       <p><a href="/servers?sort=claude">All servers by token cost →</a></p>
 
-      <h2>Latency</h2>
-      <div class="stats">
-        <div class="stat"><b>{ms(run.initMs.median)}</b><span>median initialize</span></div>
-        <div class="stat"><b>{ms(run.initMs.p90)}</b><span>90th percentile initialize</span></div>
-      </div>
+      {series.length > 1 && (
+        <>
+          <h2>Run by run</h2>
+          <p class="muted small">The last {series.length} daily runs. Hover a point for its value.</p>
+          <h3>Servers that answer and list their tools</h3>
+          <Trend id="trend-alive" points={trend((r) => Math.round((r.ok / r.probed) * 1000) / 10)} unit=" %" format={(n) => n.toFixed(1)} />
+          <h3>Median tokens of a tool set{run.claudeTokens ? ` in ${modelName(run.claudeTokens.model)}` : ''}</h3>
+          <Trend id="trend-median" points={trend((r) => r.claudeTokens?.median ?? r.toolsTokens.median)} />
+          <h3>Remote servers in the registry</h3>
+          <Trend id="trend-probed" points={trend((r) => r.probed)} />
+        </>
+      )}
 
       <h2>Protocol versions, alive servers</h2>
-      <div class="frame">
-        <table>
-          <thead><tr><th>Negotiated version</th><th class="num">Servers</th><th class="num">Share</th></tr></thead>
-          <tbody>
-            {Object.entries(run.protocols).map(([v, n]) => (
-              <tr><td class="mono"><a href={`/servers?protocol=${v}`}>{v}</a></td><td class="num">{num(n)}</td><td class="num">{pct(n, run.ok)}</td></tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Bars id="protocols" items={Object.entries(run.protocols).filter(([v]) => v !== 'unknown').sort((a, b) => b[1] - a[1]).map(([v, n]) => ({ label: v, value: n, href: `/servers?protocol=${v}`, note: pct(n, run.ok) }))} columns={['Negotiated version', 'Servers']} />
 
       <h2>Auth schemes, servers that need auth</h2>
-      <div class="frame">
-        <table>
-          <thead><tr><th>WWW-Authenticate</th><th class="num">Servers</th></tr></thead>
-          <tbody>
-            {Object.entries(run.authSchemes).map(([v, n]) => (
-              <tr><td class="mono">{v}</td><td class="num">{num(n)}</td></tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Bars id="auth" items={Object.entries(run.authSchemes).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([v, n]) => ({ label: v === 'none' ? 'no WWW-Authenticate header' : v, value: n }))} columns={['WWW-Authenticate', 'Servers']} />
 
       <h2>Transports</h2>
-      <div class="frame">
-        <table>
-          <thead><tr><th>Transport</th><th class="num">Servers</th><th class="num">Share</th></tr></thead>
-          <tbody>
-            {Object.entries(run.transports).map(([v, n]) => (
-              <tr><td class="mono"><a href={`/servers?transport=${v}`}>{v}</a></td><td class="num">{num(n)}</td><td class="num">{pct(n, run.probed)}</td></tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Bars id="transports" items={Object.entries(run.transports).sort((a, b) => b[1] - a[1]).map(([v, n]) => ({ label: v, value: n, href: `/servers?transport=${v}`, note: pct(n, run.probed) }))} columns={['Transport', 'Servers']} />
 
       <h2>Biggest publishers</h2>
-      <div class="frame hosts">
-        <table>
-          <thead><tr><th>Host</th><th class="num">Servers</th><th class="num">Alive</th><th class="num">Gated</th><th class="num">Down</th><th class="num">Distinct tool sets</th></tr></thead>
-          <tbody>
-            {hosts.map((h) => (
-              <tr>
-                <td class="host"><a class="mono" href={`/servers?host=${encodeURIComponent(h.host)}`}>{h.host}</a></td>
-                <td class="num">{num(h.servers)}</td>
-                <td class="num">{num(h.ok)}</td>
-                <td class="num">{num(h.auth)}</td>
-                <td class="num">{num(h.dead)}</td>
-                <td class="num">{num(h.unique_toolsets)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <p class="muted small">Hosts by the number of registry entries they serve. The tooltip says how many are alive and how many distinct tool sets they have.</p>
+      <Bars id="hosts" items={hosts.map((h) => ({ label: h.host, value: h.servers, href: `/servers?host=${encodeURIComponent(h.host)}`, note: `${num(h.ok)} alive, ${num(h.unique_toolsets)} distinct tool sets` }))} columns={['Host', 'Servers']} />
       <p><a href="/hosts">All hosts →</a></p>
     </>
   )}

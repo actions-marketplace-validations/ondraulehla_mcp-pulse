@@ -199,6 +199,13 @@ const counted = ok.filter((r) => r.claudeTokens != null);
 const claude = counted.map((r) => r.claudeTokens!);
 const claudeCc = counted.map((r) => r.claudeTokensCc ?? r.claudeTokens!);
 const claudeModel = counted[0]?.claudeModel;
+/** Histogram of the exact counts: how many alive servers fall into each cost band. */
+const HISTOGRAM_EDGES = [500, 1000, 2000, 5000, 10000, 20000, 50000, 100000];
+const histogram = (xs: number[]) => {
+  const bins = new Array(HISTOGRAM_EDGES.length + 1).fill(0) as number[];
+  for (const x of xs) bins[HISTOGRAM_EDGES.findIndex((e) => x < e) === -1 ? HISTOGRAM_EDGES.length : HISTOGRAM_EDGES.findIndex((e) => x < e)]++;
+  return { edges: HISTOGRAM_EDGES, bins };
+};
 const uniqueToolsets = new Set(ok.map((r) => r.toolsetHash)).size;
 /** Ranks by the exact Claude count when the run has one, else by the estimate. */
 const weight = (r: ServerRow) => r.claudeTokens ?? (counted.length ? -1 : (r.toolsTokens ?? 0));
@@ -221,6 +228,7 @@ const summary = {
         model: claudeModel,
         counted: counted.length,
         refused: ok.filter((r) => r.claudeError).length,
+        histogram: histogram(claude),
         median: quantile(claude, 0.5), p90: quantile(claude, 0.9), p99: quantile(claude, 0.99), max: Math.max(0, ...claude), total: claude.reduce((a, b) => a + b, 0),
         claudeCode: { median: quantile(claudeCc, 0.5), p90: quantile(claudeCc, 0.9), p99: quantile(claudeCc, 0.99), max: Math.max(0, ...claudeCc), total: claudeCc.reduce((a, b) => a + b, 0) },
         /** Exact count divided by the estimate, over the counted servers. */

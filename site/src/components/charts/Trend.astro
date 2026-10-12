@@ -1,0 +1,66 @@
+---
+/**
+ * One series over the last runs as an SVG line: 2 px line, 8 px markers with a
+ * surface ring, hairline grid, the latest value labelled at the end. Each point
+ * is a focusable hit area with its own tooltip. A table twin follows.
+ */
+interface Point {
+  date: string;
+  value: number;
+}
+interface Props {
+  points: Point[];
+  id: string;
+  /** Formats a value for labels, tooltips and the table. */
+  format?: (n: number) => string;
+  unit?: string;
+  /** Start the axis at zero instead of the data minimum. */
+  zero?: boolean;
+}
+const { points, id, unit = '', zero = false } = Astro.props;
+const format = Astro.props.format ?? ((n: number) => n.toLocaleString('en-US').replace(/,/g, ' '));
+const W = 720;
+const H = 220;
+const pad = { l: 56, r: 72, t: 16, b: 30 };
+const xs = points.map((_, i) => pad.l + (points.length > 1 ? (i / (points.length - 1)) * (W - pad.l - pad.r) : (W - pad.l - pad.r) / 2));
+const values = points.map((p) => p.value);
+const lo = zero ? 0 : Math.min(...values);
+const hi = Math.max(...values);
+const span = hi - lo || 1;
+const yOf = (v: number) => pad.t + (1 - (v - lo) / span) * (H - pad.t - pad.b);
+const ys = values.map(yOf);
+const ticks = [lo, lo + span / 2, hi];
+const path = xs.map((x, i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${ys[i].toFixed(1)}`).join(' ');
+const last = points.length - 1;
+const dateLabel = (d: string) => d.slice(5, 10);
+---
+
+<figure class="chart trend" id={id}>
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`${points.length} runs, latest ${format(values[last] ?? 0)}${unit}`}>
+    {ticks.map((t) => (
+      <g class="grid">
+        <line x1={pad.l} x2={W - pad.r} y1={yOf(t)} y2={yOf(t)} />
+        <text x={pad.l - 8} y={yOf(t) + 4} text-anchor="end">{format(Math.round(t))}</text>
+      </g>
+    ))}
+    {points.length > 1 && [0, last].map((i) => <text class="axis" x={xs[i]} y={H - 8} text-anchor={i === 0 ? 'start' : 'end'}>{dateLabel(points[i].date)}</text>)}
+    <path class="line" d={path} />
+    {points.map((p, i) => (
+      <g class="pt" tabindex="0">
+        <title>{p.date.slice(0, 10)}: {format(p.value)}{unit}</title>
+        <rect class="hit" x={xs[i] - 12} y={pad.t - 8} width="24" height={H - pad.t - pad.b + 16} />
+        <circle class="ring" cx={xs[i]} cy={ys[i]} r="6" />
+        <circle class="dot" cx={xs[i]} cy={ys[i]} r="4" />
+        <text class="tip" x={xs[i]} y={ys[i] - 12} text-anchor="middle">{dateLabel(p.date)} · {format(p.value)}{unit}</text>
+      </g>
+    ))}
+    {points.length > 0 && <text class="end" x={xs[last] + 10} y={ys[last] + 4}>{format(values[last])}{unit}</text>}
+  </svg>
+  <details class="chart-table">
+    <summary>as a table</summary>
+    <table>
+      <thead><tr><th>Run</th><th class="num">Value</th></tr></thead>
+      <tbody>{[...points].reverse().map((p) => <tr><td class="mono">{p.date.slice(0, 10)}</td><td class="num">{format(p.value)}{unit}</td></tr>)}</tbody>
+    </table>
+  </details>
+</figure>

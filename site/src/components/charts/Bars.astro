@@ -1,0 +1,53 @@
+---
+/**
+ * Horizontal bars in HTML: one row per item, the value at the tip, the hovered
+ * row lifts and shows its tooltip. A table twin sits under "as a table".
+ * One series, one colour, unless an item carries a status tone.
+ */
+export interface BarItem {
+  label: string;
+  value: number;
+  /** Second line under the label. */
+  sub?: string;
+  href?: string;
+  /** Status tone; absent means the single-series accent. */
+  tone?: 'up' | 'gated' | 'down';
+  /** Text at the tip instead of the formatted value. */
+  display?: string;
+  /** Text for the tooltip and the table's second column. */
+  note?: string;
+}
+interface Props {
+  items: BarItem[];
+  /** Column headers for the table twin. */
+  columns: [string, string];
+  /** Share of the largest value that a bar spans at most. */
+  max?: number;
+  id: string;
+}
+const { items, columns, id } = Astro.props;
+const max = Astro.props.max ?? Math.max(1, ...items.map((i) => i.value));
+const fmt = (n: number) => n.toLocaleString('en-US').replace(/,/g, ' ');
+---
+
+<figure class="chart bars" id={id}>
+  <ol>
+    {items.map((it) => (
+      <li class={`bar${it.tone ? ` ${it.tone}` : ''}`} tabindex="0" data-tip={`${it.display ?? fmt(it.value)}${it.note ? ` · ${it.note}` : ''}`}>
+        <span class="bar-label">{it.href ? <a href={it.href}>{it.label}</a> : it.label}{it.sub && <small>{it.sub}</small>}</span>
+        <span class="bar-track"><span class="bar-fill" style={`width:${Math.max(0.6, (it.value / max) * 100)}%`}></span><span class="bar-value">{it.display ?? fmt(it.value)}</span></span>
+      </li>
+    ))}
+  </ol>
+  <details class="chart-table">
+    <summary>as a table</summary>
+    <table>
+      <thead><tr><th>{columns[0]}</th><th class="num">{columns[1]}</th>{items.some((i) => i.note) && <th>Note</th>}</tr></thead>
+      <tbody>
+        {items.map((it) => (
+          <tr><td class="break">{it.href ? <a href={it.href}>{it.label}</a> : it.label}</td><td class="num">{it.display ?? fmt(it.value)}</td>{items.some((i) => i.note) && <td>{it.note ?? ''}</td>}</tr>
+        ))}
+      </tbody>
+    </table>
+  </details>
+</figure>
