@@ -84,7 +84,7 @@ const heavyMax = Math.max(1, ...topHeavy.map((h) => h.claudeTokens ?? h.toolsTok
           <h3>Servers that answer and list their tools</h3>
           <Trend id="trend-alive" points={trend((r) => Math.round((r.ok / r.probed) * 1000) / 10)} unit=" %" format={(n) => n.toFixed(1)} />
           <h3>Median tokens of a tool set{run.claudeTokens ? ` in ${modelName(run.claudeTokens.model)}` : ''}</h3>
-          <Trend id="trend-median" points={trend((r) => r.claudeTokens?.median ?? r.toolsTokens.median)} />
+          <Trend id="trend-median" points={trend((r) => (run.claudeTokens ? r.claudeTokens?.median : r.toolsTokens.median))} />
           <h3>Remote servers in the registry</h3>
           <Trend id="trend-probed" points={trend((r) => r.probed)} />
         </>
