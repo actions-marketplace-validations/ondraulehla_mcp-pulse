@@ -1,5 +1,5 @@
 name: 'mcptop: token budget for MCP servers'
-description: 'Measures what the MCP servers in a config cost in context tokens, writes a job summary, and fails the job when the total is above a budget.'
+description: 'Token cost of the MCP servers in your config: a job summary per server, and a failed job above a budget.'
 author: 'Ondřej Úlehla'
 branding:
   icon: 'activity'
