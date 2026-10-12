@@ -28,7 +28,7 @@ It starts every configured server the way your client does, lists the tools and 
 ### In CI, as a GitHub Action
 
 ```yaml
-- uses: ondraulehla/mcp-pulse@main
+- uses: ondraulehla/mcp-pulse@v1
   with:
     config: .mcp.json   # one or more config files, one per line
     budget: 30000       # fail when the tool definitions cost more than this
