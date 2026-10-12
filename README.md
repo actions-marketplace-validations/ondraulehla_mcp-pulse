@@ -27,6 +27,8 @@ It starts every configured server the way your client does, lists the tools and 
 
 ### In CI, as a GitHub Action
 
+[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-mcptop-e8571f?logo=github)](https://github.com/marketplace/actions/mcptop-token-budget-for-mcp-servers)
+
 ```yaml
 - uses: ondraulehla/mcp-pulse@v1
   with:
