@@ -64,7 +64,7 @@ const jsonld = {
 };
 ---
 
-<Layout title={pageTitle} description={answer} jsonld={jsonld}>
+<Layout title={pageTitle} description={answer} jsonld={jsonld} feed={{ href: `/s/${name}.xml`, title: `${name} on mcp-pulse` }}>
   <p class="kicker mono">{name}</p>
   <h1 class="poster">{heading}</h1>
   {server.description && <p class="lede">{server.description}</p>}
@@ -146,7 +146,8 @@ const jsonld = {
     </>
   )}
 
-  <h2>Badge</h2>
+  <h2>Badge and feed</h2>
   <p><img src={`/badge/${name}.svg`} alt={`mcp-pulse: ${label(server.status)}`} height="20" /></p>
   <pre>{badgeMd}</pre>
+  <p class="muted small">An entry for every probe that changed the result, the tool count or the token cost: <a href={`/s/${name}.xml`}>Atom feed</a>. Add it to a feed reader or a Slack RSS app to hear when the server stops answering or its tool set grows.</p>
 </Layout>

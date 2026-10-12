@@ -11,12 +11,15 @@ interface Props {
   jsonld?: unknown;
   /** Robots meta, for example "noindex, follow" on list variants that crawlers should not fetch. */
   robots?: string;
+  /** An Atom feed for this page, in place of the site-wide changes feed. */
+  feed?: { href: string; title: string };
 }
 const {
   title,
   description = 'Is this MCP server alive? What does it cost your context window? Daily health and token cost of every remote server in the official MCP registry.',
   jsonld,
-  robots
+  robots,
+  feed
 } = Astro.props;
 const path = Astro.url.pathname;
 const nav: Array<[string, string]> = [
@@ -38,7 +41,7 @@ const canonical = new URL(path + Astro.url.search, Astro.site ?? Astro.url).toSt
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title === 'mcp-pulse' ? 'mcp-pulse' : `${title} · mcp-pulse`}</title>
     <meta name="description" content={description} />
-    <link rel="alternate" type="application/atom+xml" title="mcp-pulse: what changed" href="/changes.xml" />
+    <link rel="alternate" type="application/atom+xml" title={feed?.title ?? 'mcp-pulse: what changed'} href={feed?.href ?? '/changes.xml'} />
     {robots && <meta name="robots" content={robots} />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
