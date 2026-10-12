@@ -16,7 +16,7 @@ const SITE = 'https://mcp-pulse.ulehla.dev';
  */
 function build(): McpServer {
   const server = new McpServer(
-    { name: 'mcp-pulse', version: '0.1.2' },
+    { name: 'mcp-pulse', version: '0.1.3' },
     {
       instructions:
         'Health and token cost of every remote server in the official MCP registry, probed daily. Use lookup_server for a registry name or URL, search_servers to find servers, check_server to probe a URL that is not in the registry. claudeTokens is the exact count from the Anthropic count_tokens endpoint (claudeTokensClaudeCode with the mcp__<server>__ prefix); toolsTokens is an o200k_base estimate over each tool definition.'
