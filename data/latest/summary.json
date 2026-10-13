@@ -1,41 +1,41 @@
 {
-  "probedAt": "2026-10-12T12:03:15.932Z",
-  "registryEntries": 42317,
-  "registryWithRemote": 26943,
-  "probed": 26943,
+  "probedAt": "2026-10-13T11:31:08.322Z",
+  "registryEntries": 42797,
+  "registryWithRemote": 27335,
+  "probed": 27335,
   "byStatus": {
-    "ok": 14759,
-    "auth": 7073,
-    "protocol_error": 1690,
-    "not_found": 965,
-    "dns": 711,
+    "ok": 14817,
+    "auth": 7222,
+    "protocol_error": 1709,
+    "not_found": 974,
+    "dns": 688,
+    "server_error": 466,
     "payment": 447,
-    "server_error": 314,
-    "tls": 275,
-    "timeout": 226,
-    "rate_limited": 201,
+    "tls": 277,
+    "rate_limited": 256,
+    "timeout": 201,
     "newer_protocol": 129,
-    "error": 119,
-    "refused": 34
+    "error": 120,
+    "refused": 29
   },
-  "reachable": 22408,
-  "ok": 14759,
-  "uniqueToolsets": 14079,
-  "duplicateServers": 680,
+  "reachable": 22615,
+  "ok": 14817,
+  "uniqueToolsets": 14178,
+  "duplicateServers": 639,
   "protocols": {
-    "2025-11-25": 8913,
-    "2025-03-26": 3162,
-    "2025-06-18": 2127,
-    "2024-11-05": 505,
+    "2025-11-25": 8896,
+    "2025-03-26": 3187,
+    "2025-06-18": 2173,
+    "2024-11-05": 509,
     "unknown": 52
   },
   "authSchemes": {
-    "Bearer": 6067,
-    "none": 982,
+    "Bearer": 6207,
+    "none": 990,
     "ApiKey": 10,
     "AzureApiManagementKey": 6,
     "OAuth": 2,
-    "Basic": 1,
+    "Basic": 2,
     "Key": 1,
     "Api-Key": 1,
     "x-access-key": 1,
@@ -43,36 +43,59 @@
     "RoseMember": 1
   },
   "transports": {
-    "streamable-http": 26206,
-    "sse": 737
+    "streamable-http": 26599,
+    "sse": 736
   },
   "toolsTokens": {
-    "median": 1734,
+    "median": 1762,
     "p90": 7429,
-    "p99": 30304,
-    "max": 537158,
-    "total": 65562095
+    "p99": 30132,
+    "max": 537944,
+    "total": 65983436
   },
   "claudeTokens": {
     "model": "claude-opus-5-5",
-    "counted": 14497,
-    "refused": 252,
-    "median": 2933,
+    "counted": 14552,
+    "refused": 255,
+    "histogram": {
+      "edges": [
+        500,
+        1000,
+        2000,
+        5000,
+        10000,
+        20000,
+        50000,
+        100000
+      ],
+      "bins": [
+        868,
+        1679,
+        2590,
+        3776,
+        1599,
+        3164,
+        740,
+        94,
+        42
+      ]
+    },
+    "median": 2976,
     "p90": 13050,
-    "p99": 48534,
+    "p99": 48325,
     "max": 944524,
-    "total": 109017733,
+    "total": 109608171,
     "claudeCode": {
-      "median": 3026,
+      "median": 3074,
       "p90": 13515,
-      "p99": 49621,
+      "p99": 49582,
       "max": 945084,
-      "total": 111597862
+      "total": 112187556
     },
     "ratioToEstimate": {
-      "median": 1.7567676767676768,
-      "p10": 1.6329686360320934,
-      "p90": 1.8481212503946953
+      "median": 1.7566657689200107,
+      "p10": 1.6315086782376502,
+      "p90": 1.8489208633093526
     }
   },
   "toolCount": {
@@ -81,10 +104,1298 @@
     "max": 2000
   },
   "initMs": {
-    "median": 1193,
-    "p90": 3263
+    "median": 464,
+    "p90": 1629
   },
-  "hosts": 18904,
+  "hosts": 19261,
+  "changes": {
+    "since": "2026-10-12T12:03:10.726Z",
+    "added": [
+      {
+        "name": "com.calcbright/calcbright",
+        "status": "ok",
+        "tokens": 82650
+      },
+      {
+        "name": "tech.kyanitelabs/kinocut",
+        "status": "ok",
+        "tokens": 71152
+      },
+      {
+        "name": "io.github.pipeworx-io/bts-ontime",
+        "status": "ok",
+        "tokens": 37217
+      },
+      {
+        "name": "io.github.pipeworx-io/brazil-comex-stat",
+        "status": "ok",
+        "tokens": 37018
+      },
+      {
+        "name": "net.ts.tailb4ac3a.ari001/arysphere-x402",
+        "status": "ok",
+        "tokens": 32036
+      },
+      {
+        "name": "ai.letsship/ship",
+        "status": "ok",
+        "tokens": 24133
+      },
+      {
+        "name": "io.github.HASAVAGE/teardrop",
+        "status": "ok",
+        "tokens": 19472
+      },
+      {
+        "name": "com.torbrooknews.mcp/agent-hub",
+        "status": "ok",
+        "tokens": 16930
+      },
+      {
+        "name": "com.zerotrustphysics/verifier",
+        "status": "ok",
+        "tokens": 16712
+      },
+      {
+        "name": "com.tektolo/rental-property",
+        "status": "ok",
+        "tokens": 15391
+      },
+      {
+        "name": "trade.axel/filing-public",
+        "status": "ok",
+        "tokens": 14444
+      },
+      {
+        "name": "io.github.ParallaxProtocol/parallax-mcp",
+        "status": "ok",
+        "tokens": 13345
+      },
+      {
+        "name": "market.awareness/awareness",
+        "status": "ok",
+        "tokens": 13245
+      },
+      {
+        "name": "io.usefulapi/oblio",
+        "status": "ok",
+        "tokens": 12047
+      },
+      {
+        "name": "io.usefulapi/propstack",
+        "status": "ok",
+        "tokens": 11216
+      },
+      {
+        "name": "io.github.fredxhansson-cmyk/fuze",
+        "status": "ok",
+        "tokens": 10655
+      },
+      {
+        "name": "com.basketwatchireland/basketwatch",
+        "status": "ok",
+        "tokens": 10500
+      },
+      {
+        "name": "ai.agentboard/agentboard",
+        "status": "ok",
+        "tokens": 9974
+      },
+      {
+        "name": "io.usefulapi/smartaccounts",
+        "status": "ok",
+        "tokens": 9825
+      },
+      {
+        "name": "com.a2awire/data-apple-news-apple-announcement-apple-release",
+        "status": "ok",
+        "tokens": 9467
+      },
+      {
+        "name": "org.opennih/opennih",
+        "status": "ok",
+        "tokens": 8222
+      },
+      {
+        "name": "com.rightshold/rightshold",
+        "status": "ok",
+        "tokens": 8140
+      },
+      {
+        "name": "app.fanzero/fanzero",
+        "status": "ok",
+        "tokens": 7946
+      },
+      {
+        "name": "money.stakedotlink/agents",
+        "status": "ok",
+        "tokens": 7870
+      },
+      {
+        "name": "io.usefulapi/szamlazz-hu",
+        "status": "ok",
+        "tokens": 7260
+      },
+      {
+        "name": "ai.alphabazaar/arena",
+        "status": "ok",
+        "tokens": 7236
+      },
+      {
+        "name": "com.cassiehour/cassie-hour",
+        "status": "ok",
+        "tokens": 7075
+      },
+      {
+        "name": "app.thedogs/dog-breed-advisor",
+        "status": "ok",
+        "tokens": 6803
+      },
+      {
+        "name": "com.vibenate/vibenate",
+        "status": "ok",
+        "tokens": 6793
+      },
+      {
+        "name": "com.salukilabs/folkmoot-agent-debate-vote",
+        "status": "ok",
+        "tokens": 6633
+      },
+      {
+        "name": "io.github.celfons/kya-brasil",
+        "status": "ok",
+        "tokens": 6471
+      },
+      {
+        "name": "io.usefulapi/lessonspace",
+        "status": "ok",
+        "tokens": 6454
+      },
+      {
+        "name": "io.github.horizon-pulse/horizon-pulse",
+        "status": "ok",
+        "tokens": 6402
+      },
+      {
+        "name": "com.stocktrends/market-intelligence",
+        "status": "ok",
+        "tokens": 6123
+      },
+      {
+        "name": "io.github.RealWagmi/heyanon",
+        "status": "ok",
+        "tokens": 5967
+      },
+      {
+        "name": "io.github.tiptreesystems/lacuna-research-mcp",
+        "status": "ok",
+        "tokens": 5965
+      },
+      {
+        "name": "com.astraluno/astraluno",
+        "status": "ok",
+        "tokens": 5899
+      },
+      {
+        "name": "com.buildwithgage/gage",
+        "status": "ok",
+        "tokens": 5236
+      },
+      {
+        "name": "com.relaygpu/mcp",
+        "status": "ok",
+        "tokens": 5214
+      },
+      {
+        "name": "com.yieldcave/yieldcave",
+        "status": "ok",
+        "tokens": 5122
+      },
+      {
+        "name": "chat.suiagent/yui",
+        "status": "ok",
+        "tokens": 5071
+      },
+      {
+        "name": "app.withbrie/brie",
+        "status": "ok",
+        "tokens": 4863
+      },
+      {
+        "name": "uk.co.haulierscope/operator-licences",
+        "status": "ok",
+        "tokens": 4853
+      },
+      {
+        "name": "eu.tracepass/compliance",
+        "status": "ok",
+        "tokens": 4662
+      },
+      {
+        "name": "io.usefulapi/abstract-api",
+        "status": "ok",
+        "tokens": 4550
+      },
+      {
+        "name": "io.github.MatsClaes2/animehunt",
+        "status": "ok",
+        "tokens": 4475
+      },
+      {
+        "name": "ai.arcreport/mcp",
+        "status": "ok",
+        "tokens": 4447
+      },
+      {
+        "name": "ai.arcreport/ask",
+        "status": "ok",
+        "tokens": 4259
+      },
+      {
+        "name": "io.github.verdansk69/bidwell-health",
+        "status": "ok",
+        "tokens": 4255
+      },
+      {
+        "name": "io.github.thesinbin12-jpg/getqueryly",
+        "status": "ok",
+        "tokens": 4236
+      },
+      {
+        "name": "io.github.jake-zaiba/deai-research",
+        "status": "ok",
+        "tokens": 4222
+      },
+      {
+        "name": "xyz.scienter/scienter",
+        "status": "ok",
+        "tokens": 4075
+      },
+      {
+        "name": "com.kvartiry-phuket/phuket",
+        "status": "ok",
+        "tokens": 4052
+      },
+      {
+        "name": "com.buzzmebro/buzzmebro",
+        "status": "ok",
+        "tokens": 3988
+      },
+      {
+        "name": "app.launchfiles/launchfiles",
+        "status": "ok",
+        "tokens": 3877
+      },
+      {
+        "name": "io.github.cyanheads/internet-archive-mcp-server",
+        "status": "ok",
+        "tokens": 3815
+      },
+      {
+        "name": "co.proofsource/proofsource",
+        "status": "ok",
+        "tokens": 3730
+      },
+      {
+        "name": "io.github.uniwire-dev/uniwire",
+        "status": "ok",
+        "tokens": 3709
+      },
+      {
+        "name": "org.thealibrary/thea",
+        "status": "ok",
+        "tokens": 3682
+      },
+      {
+        "name": "org.daypilot/mcp",
+        "status": "ok",
+        "tokens": 3651
+      }
+    ],
+    "removed": [
+      "com.botrotation/discovery",
+      "com.drillable/gateway",
+      "com.openwants/openwants",
+      "dev.fruitstand/fund-returns",
+      "dev.workers.jeffmarcilliat.proofrun-closed/proofrun",
+      "io.github.Krzysztof318/mailfathom",
+      "io.github.drshairsultan/calcbright",
+      "io.github.sivaguruayyadurai/lotssocial"
+    ],
+    "wentDown": [
+      {
+        "name": "ai.seleya/autonomy-index",
+        "from": "auth",
+        "to": "dns"
+      },
+      {
+        "name": "ai.projectdata/mpp-connector",
+        "from": "auth",
+        "to": "timeout"
+      },
+      {
+        "name": "ai.workledge/workledge",
+        "from": "auth",
+        "to": "server_error"
+      },
+      {
+        "name": "ai.teentherapy/library",
+        "from": "ok",
+        "to": "timeout"
+      },
+      {
+        "name": "br.com.wikijuridica/acervo-juridico",
+        "from": "ok",
+        "to": "protocol_error"
+      },
+      {
+        "name": "cloud.opendocs/opendocs",
+        "from": "auth",
+        "to": "timeout"
+      },
+      {
+        "name": "co.marketmayhem/mcp",
+        "from": "ok",
+        "to": "server_error"
+      },
+      {
+        "name": "com.boosthis/boosthis",
+        "from": "ok",
+        "to": "not_found"
+      },
+      {
+        "name": "com.bokendell/portfolio",
+        "from": "ok",
+        "to": "timeout"
+      },
+      {
+        "name": "com.daedalmap/un_sdg",
+        "from": "ok",
+        "to": "protocol_error"
+      },
+      {
+        "name": "com.detourmap/places",
+        "from": "ok",
+        "to": "not_found"
+      },
+      {
+        "name": "com.cvelens/cvelens",
+        "from": "auth",
+        "to": "timeout"
+      },
+      {
+        "name": "com.eurorackref/eurorack",
+        "from": "ok",
+        "to": "not_found"
+      },
+      {
+        "name": "com.europebeachmap/beachmap",
+        "from": "ok",
+        "to": "not_found"
+      },
+      {
+        "name": "com.elshwork/agent-network",
+        "from": "auth",
+        "to": "timeout"
+      },
+      {
+        "name": "com.featurejet/feedback-board",
+        "from": "ok",
+        "to": "timeout"
+      },
+      {
+        "name": "com.gekkode/foliade",
+        "from": "ok",
+        "to": "server_error"
+      },
+      {
+        "name": "com.idevice/wearables",
+        "from": "ok",
+        "to": "timeout"
+      },
+      {
+        "name": "com.llmotions.farm/gpt-5-6-luna-agent",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.liz6/docs",
+        "from": "ok",
+        "to": "timeout"
+      },
+      {
+        "name": "com.monthendly/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.mowrouteworks/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.multiplesbook/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.mustvo/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.neptunecigar/catalog",
+        "from": "ok",
+        "to": "server_error"
+      },
+      {
+        "name": "com.netsheetly/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.ninebix/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.nofovo/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.offdayly/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.obsmetrics.paygent/agents",
+        "from": "ok",
+        "to": "server_error"
+      },
+      {
+        "name": "com.muzecmo/ecommerce-ads",
+        "from": "auth",
+        "to": "timeout"
+      },
+      {
+        "name": "com.opexvo/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.orderpadledger/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.orgbix/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.orgplanly/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.partnro/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.patientvo/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.paywallcompass/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.pdf-redaction/pdf-redaction-mcp",
+        "from": "auth",
+        "to": "tls"
+      },
+      {
+        "name": "com.perdiemdesk/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.perdiemo/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.pickpathly/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.ou-reports/just-signal",
+        "from": "ok",
+        "to": "timeout"
+      },
+      {
+        "name": "com.ppmly/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.probeledger/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.proofzo/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.ptoroom/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.punchlistworks/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.rapportvo/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.rebadgo/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.recallvia/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.receivableledger/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.reconzy/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.remitdeck/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.rentrolldesk/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.reputzo/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.reqnix/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.requly/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.retainvia/site",
+        "from": "ok",
+        "to": "rate_limited"
+      },
+      {
+        "name": "com.retainvo/site",
+        "from": "ok",
+        "to": "rate_limited"
+      }
+    ],
+    "cameBack": [
+      {
+        "name": "ai.kosmodrom/kosmodrom",
+        "from": "timeout",
+        "to": "auth"
+      },
+      {
+        "name": "ai.oobeprotocol.sap.mcp/sap-mcp",
+        "from": "server_error",
+        "to": "ok"
+      },
+      {
+        "name": "app.seamark/seamark",
+        "from": "timeout",
+        "to": "ok"
+      },
+      {
+        "name": "ch.cyon/mcp",
+        "from": "protocol_error",
+        "to": "auth"
+      },
+      {
+        "name": "co.ordergroup/public",
+        "from": "server_error",
+        "to": "ok"
+      },
+      {
+        "name": "com.ashareapi/ashare-data-api",
+        "from": "server_error",
+        "to": "ok"
+      },
+      {
+        "name": "com.bitvoya/bitvoya-mcp",
+        "from": "timeout",
+        "to": "auth"
+      },
+      {
+        "name": "com.barterbanner/barterbanner",
+        "from": "timeout",
+        "to": "ok"
+      },
+      {
+        "name": "com.brainiall/image",
+        "from": "protocol_error",
+        "to": "ok"
+      },
+      {
+        "name": "com.brainiall/nlp",
+        "from": "protocol_error",
+        "to": "ok"
+      },
+      {
+        "name": "com.cerberusindex/cerberus-index",
+        "from": "timeout",
+        "to": "ok"
+      },
+      {
+        "name": "com.coralswarm/coralswarm",
+        "from": "timeout",
+        "to": "auth"
+      },
+      {
+        "name": "com.crossingkeyintelligence/crossingkey-mcp",
+        "from": "dns",
+        "to": "ok"
+      },
+      {
+        "name": "com.daedalmap/tsunamis",
+        "from": "protocol_error",
+        "to": "ok"
+      },
+      {
+        "name": "com.emergentphysicslab/waveguard",
+        "from": "timeout",
+        "to": "ok"
+      },
+      {
+        "name": "com.hiringcensus/hiring-census",
+        "from": "timeout",
+        "to": "ok"
+      },
+      {
+        "name": "com.palaner/mcp",
+        "from": "timeout",
+        "to": "auth"
+      },
+      {
+        "name": "com.papayapay.consumer-production.mcp-agent/bill-payment",
+        "from": "rate_limited",
+        "to": "ok"
+      },
+      {
+        "name": "com.prismfact/hub",
+        "from": "server_error",
+        "to": "ok"
+      },
+      {
+        "name": "com.rankvisit/mcp",
+        "from": "timeout",
+        "to": "auth"
+      },
+      {
+        "name": "com.recipes-daily/recipes",
+        "from": "timeout",
+        "to": "ok"
+      },
+      {
+        "name": "com.rekvira/rekvira",
+        "from": "timeout",
+        "to": "ok"
+      },
+      {
+        "name": "com.relmcrm/relm",
+        "from": "timeout",
+        "to": "ok"
+      },
+      {
+        "name": "com.riverscript/mcp",
+        "from": "timeout",
+        "to": "ok"
+      },
+      {
+        "name": "com.scorecompute/scorecompute",
+        "from": "timeout",
+        "to": "ok"
+      },
+      {
+        "name": "com.singsk/uml-plantuml",
+        "from": "timeout",
+        "to": "ok"
+      },
+      {
+        "name": "com.shaq-log/freight-mcp",
+        "from": "protocol_error",
+        "to": "ok"
+      },
+      {
+        "name": "com.swarm-board/board",
+        "from": "server_error",
+        "to": "ok"
+      },
+      {
+        "name": "com.thejohnsonbros/plumbing-booking",
+        "from": "server_error",
+        "to": "ok"
+      },
+      {
+        "name": "com.thestackunderflow/datum-property",
+        "from": "tls",
+        "to": "ok"
+      },
+      {
+        "name": "com.virohanalife/portfolio",
+        "from": "tls",
+        "to": "auth"
+      },
+      {
+        "name": "com.virohanadentalclinic/dental",
+        "from": "dns",
+        "to": "ok"
+      },
+      {
+        "name": "com.virohanalife/site",
+        "from": "timeout",
+        "to": "ok"
+      },
+      {
+        "name": "com.virohanalife/mnemos",
+        "from": "dns",
+        "to": "ok"
+      },
+      {
+        "name": "dev.3tg/mcp",
+        "from": "protocol_error",
+        "to": "ok"
+      },
+      {
+        "name": "dev.fly.x402-accelerometer-feed/tokenized-stocks-agent-data",
+        "from": "timeout",
+        "to": "ok"
+      },
+      {
+        "name": "fr.vintage-postcard/boutique",
+        "from": "timeout",
+        "to": "ok"
+      },
+      {
+        "name": "goog.workspace-developer/developer-tools",
+        "from": "protocol_error",
+        "to": "ok"
+      },
+      {
+        "name": "io.datagoat/datagoat",
+        "from": "not_found",
+        "to": "auth"
+      },
+      {
+        "name": "io.carrierscore/carrierscore",
+        "from": "dns",
+        "to": "ok"
+      },
+      {
+        "name": "io.github.CognitiveCoreAI/the-remote-suite-dev",
+        "from": "not_found",
+        "to": "auth"
+      },
+      {
+        "name": "io.github.CognitiveCoreAI/the-remote-suite",
+        "from": "not_found",
+        "to": "auth"
+      },
+      {
+        "name": "io.github.Dionisselami/proseify-mcp",
+        "from": "server_error",
+        "to": "auth"
+      },
+      {
+        "name": "io.github.Elimuaa/money-mind",
+        "from": "server_error",
+        "to": "ok"
+      },
+      {
+        "name": "io.github.Wh-bi/wanhe-compliance",
+        "from": "dns",
+        "to": "ok"
+      },
+      {
+        "name": "io.github.bguillow-rgb/pour-picks",
+        "from": "rate_limited",
+        "to": "ok"
+      },
+      {
+        "name": "io.github.bsrishi/drivara",
+        "from": "server_error",
+        "to": "auth"
+      },
+      {
+        "name": "io.github.click2ann/talespinner",
+        "from": "timeout",
+        "to": "ok"
+      },
+      {
+        "name": "io.github.gmlewis/on-demand-books",
+        "from": "protocol_error",
+        "to": "ok"
+      },
+      {
+        "name": "io.github.helena-bioinformatics/folklore",
+        "from": "server_error",
+        "to": "ok"
+      },
+      {
+        "name": "io.github.helena-bioinformatics/noodle",
+        "from": "server_error",
+        "to": "ok"
+      },
+      {
+        "name": "io.github.gpartin/waveguard",
+        "from": "timeout",
+        "to": "ok"
+      },
+      {
+        "name": "io.github.huwhitememes/tollbooth",
+        "from": "timeout",
+        "to": "ok"
+      },
+      {
+        "name": "io.github.iorpaul3/date-firme",
+        "from": "protocol_error",
+        "to": "ok"
+      },
+      {
+        "name": "io.github.jxbaoxiaodong/ftirfun-mcp",
+        "from": "dns",
+        "to": "auth"
+      },
+      {
+        "name": "io.github.kansei-link/kansei-mcp-server",
+        "from": "timeout",
+        "to": "ok"
+      },
+      {
+        "name": "io.github.orbotshq/google-ads-transparency-scraper",
+        "from": "server_error",
+        "to": "auth"
+      },
+      {
+        "name": "io.github.paulieb89/uk-due-diligence-mcp",
+        "from": "timeout",
+        "to": "ok"
+      },
+      {
+        "name": "io.github.pipeworx-io/anzctr",
+        "from": "timeout",
+        "to": "ok"
+      },
+      {
+        "name": "io.github.pipeworx-io/arcgis-chapelhill",
+        "from": "timeout",
+        "to": "ok"
+      }
+    ],
+    "tokenChanges": [
+      {
+        "name": "ai.switchapp/switch",
+        "before": 60886,
+        "after": 163408,
+        "exact": true
+      },
+      {
+        "name": "net.cwsi/fares",
+        "before": 7807,
+        "after": 78287,
+        "exact": true
+      },
+      {
+        "name": "ai.tickerscout/ticker-scout",
+        "before": 52476,
+        "after": 10851,
+        "exact": true
+      },
+      {
+        "name": "app.usewrit/writ-cloud",
+        "before": 42922,
+        "after": 10795,
+        "exact": true
+      },
+      {
+        "name": "io.draw/mcp",
+        "before": 28307,
+        "after": 3321,
+        "exact": true
+      },
+      {
+        "name": "io.github.xOyabunx/everycalc",
+        "before": 2641,
+        "after": 25709,
+        "exact": true
+      },
+      {
+        "name": "com.commsharbor/commsharbor",
+        "before": 29576,
+        "after": 7733,
+        "exact": true
+      },
+      {
+        "name": "dev.ambolt/ambolt",
+        "before": 16807,
+        "after": 239,
+        "exact": true
+      },
+      {
+        "name": "com.clypmint/clypmint",
+        "before": 6379,
+        "after": 22287,
+        "exact": true
+      },
+      {
+        "name": "dev.onpage/onpage",
+        "before": 41621,
+        "after": 28812,
+        "exact": true
+      },
+      {
+        "name": "com.okfindex/okfindex",
+        "before": 1759,
+        "after": 14403,
+        "exact": true
+      },
+      {
+        "name": "com.datronis/mcp",
+        "before": 12335,
+        "after": 23824,
+        "exact": true
+      },
+      {
+        "name": "io.github.UnityNodes/blobpedia",
+        "before": 11903,
+        "after": 22750,
+        "exact": true
+      },
+      {
+        "name": "io.github.vanakenj45/x402-agent-api",
+        "before": 22025,
+        "after": 32323,
+        "exact": true
+      },
+      {
+        "name": "com.ruzora/ruzora",
+        "before": 1659,
+        "after": 11467,
+        "exact": true
+      },
+      {
+        "name": "au.com.arthr/mcp",
+        "before": 17945,
+        "after": 8169,
+        "exact": true
+      },
+      {
+        "name": "com.quailos/quailos",
+        "before": 14308,
+        "after": 23867,
+        "exact": true
+      },
+      {
+        "name": "io.agentlot/marketplace",
+        "before": 8794,
+        "after": 17583,
+        "exact": true
+      },
+      {
+        "name": "io.github.hail-hq/hail-mcp",
+        "before": 13266,
+        "after": 20456,
+        "exact": true
+      },
+      {
+        "name": "com.slicktrip/slicktrip",
+        "before": 30654,
+        "after": 37835,
+        "exact": true
+      },
+      {
+        "name": "ru.smartpdf/smartpdf",
+        "before": 4885,
+        "after": 11061,
+        "exact": true
+      },
+      {
+        "name": "io.github.cyanheads/usaspending-mcp-server",
+        "before": 14143,
+        "after": 19774,
+        "exact": true
+      },
+      {
+        "name": "com.rivalsweeper/signals",
+        "before": 2102,
+        "after": 7703,
+        "exact": true
+      },
+      {
+        "name": "com.lionx402/lion-x402",
+        "before": 1886,
+        "after": 6742,
+        "exact": true
+      },
+      {
+        "name": "dev.workers.lionmaster-operations.lion-x402/lion-x402",
+        "before": 1886,
+        "after": 6742,
+        "exact": true
+      },
+      {
+        "name": "io.github.YS-projectcalc/agent-cold-email",
+        "before": 20644,
+        "after": 25338,
+        "exact": true
+      },
+      {
+        "name": "io.github.cyanheads/openfda-mcp-server",
+        "before": 14046,
+        "after": 18525,
+        "exact": true
+      },
+      {
+        "name": "io.github.scraping-api-plans/web-data-plan-finder",
+        "before": 19294,
+        "after": 23763,
+        "exact": true
+      },
+      {
+        "name": "io.github.Z4KARY/upgrowth-mcp",
+        "before": 21155,
+        "after": 25397,
+        "exact": true
+      },
+      {
+        "name": "io.github.tehtelabs/cheapestllmapi",
+        "before": 2044,
+        "after": 6188,
+        "exact": true
+      },
+      {
+        "name": "com.wenmarpro/wenmar-open",
+        "before": 736,
+        "after": 4548,
+        "exact": true
+      },
+      {
+        "name": "app.apick/web",
+        "before": 13091,
+        "after": 9368,
+        "exact": true
+      },
+      {
+        "name": "dev.afriref/reference-data",
+        "before": 10238,
+        "after": 13825,
+        "exact": true
+      },
+      {
+        "name": "dev.euroref/reference-data",
+        "before": 10140,
+        "after": 13722,
+        "exact": true
+      },
+      {
+        "name": "dev.latamref/reference-data",
+        "before": 9751,
+        "after": 13331,
+        "exact": true
+      },
+      {
+        "name": "dev.asiaref/reference-data",
+        "before": 9920,
+        "after": 13479,
+        "exact": true
+      },
+      {
+        "name": "dev.mearef/reference-data",
+        "before": 9351,
+        "after": 12842,
+        "exact": true
+      },
+      {
+        "name": "dev.usaref/reference-data",
+        "before": 9390,
+        "after": 12875,
+        "exact": true
+      },
+      {
+        "name": "dev.ausref/reference-data",
+        "before": 9318,
+        "after": 12802,
+        "exact": true
+      },
+      {
+        "name": "dev.upfork/upfork",
+        "before": 1784,
+        "after": 5218,
+        "exact": true
+      },
+      {
+        "name": "fyi.smartfin/smartfin",
+        "before": 9075,
+        "after": 12446,
+        "exact": true
+      },
+      {
+        "name": "net.fundz/fundz",
+        "before": 11700,
+        "after": 15036,
+        "exact": true
+      },
+      {
+        "name": "es.zacatrus/zacatrus",
+        "before": 4310,
+        "after": 7645,
+        "exact": true
+      },
+      {
+        "name": "com.theresanaiforthat/taaft",
+        "before": 2096,
+        "after": 5335,
+        "exact": false
+      },
+      {
+        "name": "io.github.tell-and-go/mcp",
+        "before": 5307,
+        "after": 8066,
+        "exact": true
+      },
+      {
+        "name": "io.github.RozoAI/checkout",
+        "before": 3251,
+        "after": 5947,
+        "exact": true
+      },
+      {
+        "name": "io.github.randommonicle/commonhold",
+        "before": 7059,
+        "after": 9579,
+        "exact": true
+      },
+      {
+        "name": "io.github.Kopaev/openvan-travel",
+        "before": 12371,
+        "after": 14846,
+        "exact": true
+      },
+      {
+        "name": "io.github.Nutshell2000/agent-data-tools",
+        "before": 4122,
+        "after": 6484,
+        "exact": true
+      },
+      {
+        "name": "io.agentweather/agent-weather",
+        "before": 4960,
+        "after": 6919,
+        "exact": true
+      },
+      {
+        "name": "com.scrapeunblocker/scrapeunblocker-mcp-remote",
+        "before": 2018,
+        "after": 3866,
+        "exact": true
+      },
+      {
+        "name": "com.orioncmd.api/checks",
+        "before": 1026,
+        "after": 2834,
+        "exact": true
+      },
+      {
+        "name": "io.github.vineetgoyalhuf/connectmeguru-mcp",
+        "before": 2394,
+        "after": 665,
+        "exact": true
+      },
+      {
+        "name": "io.github.Goofproof/ronin",
+        "before": 6764,
+        "after": 5218,
+        "exact": true
+      },
+      {
+        "name": "ai.manpage/mcp",
+        "before": 2702,
+        "after": 1165,
+        "exact": false
+      },
+      {
+        "name": "fr.hermetics/rgpd",
+        "before": 1537,
+        "after": 2956,
+        "exact": true
+      },
+      {
+        "name": "us.srv.g5joilnmeep4ntz3nwezxt5dmu/stackfacts",
+        "before": 5060,
+        "after": 6465,
+        "exact": false
+      },
+      {
+        "name": "com.surfacedby/ai-visibility",
+        "before": 513,
+        "after": 1904,
+        "exact": true
+      },
+      {
+        "name": "com.agenticfinancegraph/agentic-finance-graph",
+        "before": 2672,
+        "after": 4028,
+        "exact": true
+      },
+      {
+        "name": "io.github.filipbolcek-ctrl/forest-factory",
+        "before": 1880,
+        "after": 3217,
+        "exact": true
+      }
+    ],
+    "counts": {
+      "added": 400,
+      "removed": 8,
+      "wentDown": 261,
+      "cameBack": 90,
+      "tokenChanges": 96
+    }
+  },
   "heaviest": [
     {
       "name": "com.replynodes/mcp",
@@ -97,9 +1408,9 @@
     {
       "name": "info.astroway/astrology",
       "toolCount": 791,
-      "toolsTokens": 537158,
-      "claudeTokens": 915450,
-      "claudeTokensCc": 921778,
+      "toolsTokens": 537944,
+      "claudeTokens": 916916,
+      "claudeTokensCc": 923244,
       "host": "mcp.astroway.info"
     },
     {
@@ -112,35 +1423,35 @@
     },
     {
       "name": "io.github.whiteknightonhorse/apibase",
-      "toolCount": 1420,
-      "toolsTokens": 350646,
-      "claudeTokens": 600248,
-      "claudeTokensCc": 611608,
+      "toolCount": 1423,
+      "toolsTokens": 352108,
+      "claudeTokens": 602593,
+      "claudeTokensCc": 613977,
       "host": "apibase.pro"
     },
     {
       "name": "net.crawlora/crawlora-mcp",
       "toolCount": 2000,
-      "toolsTokens": 340875,
-      "claudeTokens": 592593,
-      "claudeTokensCc": 618593,
+      "toolsTokens": 341739,
+      "claudeTokens": 593840,
+      "claudeTokensCc": 619840,
       "host": "mcp.crawlora.net"
     },
     {
       "name": "io.github.WellApp-ai/well-mcp",
-      "toolCount": 188,
-      "toolsTokens": 257179,
-      "claudeTokens": 397017,
-      "claudeTokensCc": 398897,
+      "toolCount": 198,
+      "toolsTokens": 271176,
+      "claudeTokens": 417887,
+      "claudeTokensCc": 419867,
       "host": "api.wellapp.ai"
     },
     {
-      "name": "app.soclo/soclo-mcp",
-      "toolCount": 409,
-      "toolsTokens": 181475,
-      "claudeTokens": 331535,
-      "claudeTokensCc": 336443,
-      "host": "mcp.soclo.app"
+      "name": "ai.oobeprotocol.sap.mcp/sap-mcp",
+      "toolCount": 453,
+      "toolsTokens": 178444,
+      "claudeTokens": 317425,
+      "claudeTokensCc": 322408,
+      "host": "mcp.sap.oobeprotocol.ai"
     },
     {
       "name": "io.github.Invaro/opentax",
@@ -151,19 +1462,11 @@
       "host": "opentax.invaro.ai"
     },
     {
-      "name": "info.astroway/vedic",
-      "toolCount": 193,
-      "toolsTokens": 168772,
-      "claudeTokens": 285887,
-      "claudeTokensCc": 287431,
-      "host": "mcp.astroway.info"
-    },
-    {
       "name": "io.github.duvoai/duvo",
-      "toolCount": 400,
-      "toolsTokens": 149776,
-      "claudeTokens": 243666,
-      "claudeTokensCc": 246866,
+      "toolCount": 393,
+      "toolsTokens": 149460,
+      "claudeTokens": 243082,
+      "claudeTokensCc": 246226,
       "host": "api.duvo.ai"
     },
     {
@@ -192,10 +1495,10 @@
     },
     {
       "name": "dev.tanod/tanod",
-      "toolCount": 224,
-      "toolsTokens": 105225,
-      "claudeTokens": 170771,
-      "claudeTokensCc": 172563,
+      "toolCount": 226,
+      "toolsTokens": 106125,
+      "claudeTokens": 172264,
+      "claudeTokensCc": 174072,
       "host": "tanod.dev"
     },
     {
@@ -215,6 +1518,14 @@
       "host": "www.mueblito.ar"
     },
     {
+      "name": "ai.switchapp/switch",
+      "toolCount": 110,
+      "toolsTokens": 93233,
+      "claudeTokens": 163408,
+      "claudeTokensCc": 164178,
+      "host": "mcp.switchapp.ai"
+    },
+    {
       "name": "io.github.yzlee/opcmenu",
       "toolCount": 396,
       "toolsTokens": 95927,
@@ -232,10 +1543,10 @@
     },
     {
       "name": "ai.zerowidth/zerowidth",
-      "toolCount": 259,
-      "toolsTokens": 88057,
-      "claudeTokens": 149577,
-      "claudeTokensCc": 152167,
+      "toolCount": 263,
+      "toolsTokens": 89035,
+      "claudeTokens": 151188,
+      "claudeTokensCc": 153818,
       "host": "api.zerowidth.ai"
     },
     {
