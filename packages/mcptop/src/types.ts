@@ -7,11 +7,26 @@ export interface RegistryRemote {
   headers?: Array<{ name: string; description?: string; isRequired?: boolean; isSecret?: boolean }>;
 }
 
+export interface RegistryArgument {
+  type: 'positional' | 'named' | 'flag' | string;
+  name?: string;
+  value?: string;
+  default?: string;
+  valueHint?: string;
+  isRequired?: boolean;
+  isRepeated?: boolean;
+  description?: string;
+}
+
 export interface RegistryPackage {
   registryType: string;
   identifier: string;
   version?: string;
+  runtimeHint?: string;
   transport?: { type: string; url?: string };
+  runtimeArguments?: RegistryArgument[];
+  packageArguments?: RegistryArgument[];
+  environmentVariables?: Array<{ name: string; description?: string; isRequired?: boolean; isSecret?: boolean; default?: string }>;
 }
 
 export interface RegistryServer {
