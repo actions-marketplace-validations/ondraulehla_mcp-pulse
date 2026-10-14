@@ -25,8 +25,8 @@ const faq = [
   {
     q: 'How many context tokens does an MCP server cost?',
     a: exact
-      ? `The median remote server in the official MCP registry costs ${num(median)} tokens of context per session in ${model}. This is the cost of its tool definitions only. The 90th percentile is ${num(p90)} tokens. The 99th percentile is ${num(p99)} tokens. The heaviest server costs ${num(max)} tokens. That is more than ${Math.floor(max / 200_000)} full 200k windows. In Claude Code the median is ${num(cc?.median)} tokens, because each tool name gets an mcp__ prefix. We counted ${num(counted)} servers with the Anthropic count_tokens endpoint on ${measured}.`
-      : `The median remote server in the official MCP registry costs about ${num(median)} tokens of context per session (o200k_base estimate). This is the cost of its tool definitions only. The 90th percentile is ${num(p90)} tokens. The 99th percentile is ${num(p99)} tokens. The heaviest server costs ${num(max)} tokens. We measured ${num(counted)} servers on ${measured}.`
+      ? `The median server in the official MCP registry costs ${num(median)} tokens of context per session in ${model}. This is the cost of its tool definitions only. The 90th percentile is ${num(p90)} tokens. The 99th percentile is ${num(p99)} tokens. The heaviest server costs ${num(max)} tokens. That is more than ${Math.floor(max / 200_000)} full 200k windows. In Claude Code the median is ${num(cc?.median)} tokens, because each tool name gets an mcp__ prefix. We counted ${num(counted)} servers with the Anthropic count_tokens endpoint on ${measured}.`
+      : `The median server in the official MCP registry costs about ${num(median)} tokens of context per session (o200k_base estimate). This is the cost of its tool definitions only. The 90th percentile is ${num(p90)} tokens. The 99th percentile is ${num(p99)} tokens. The heaviest server costs ${num(max)} tokens. We measured ${num(counted)} servers on ${measured}.`
   },
   {
     q: 'Why does an MCP server cost tokens before I send a prompt?',
@@ -42,7 +42,7 @@ const faq = [
   },
   {
     q: 'How many tokens does one specific MCP server cost?',
-    a: `Each remote server in the registry has a page at ${site}/s/<registry name>. The page shows the exact cost in ${model}, the cost in Claude Code, the estimate, the tool count and the status. For a server that is not in the registry, ${site}/check probes it now and counts it the same way. In a terminal, npx mcptop measures the servers in your own Claude Code, Claude Desktop, Cursor, VS Code or Windsurf config. With ANTHROPIC_API_KEY set and --claude, mcptop asks the same endpoint.`
+    a: `Each remote server in the registry, and each npm or PyPI package server, has a page at ${site}/s/<registry name>. The page shows the exact cost in ${model}, the cost in Claude Code, the estimate, the tool count and the status. For a server that is not in the registry, ${site}/check probes it now and counts it the same way. In a terminal, npx mcptop measures the servers in your own Claude Code, Claude Desktop, Cursor, VS Code or Windsurf config. With ANTHROPIC_API_KEY set and --claude, mcptop asks the same endpoint.`
   },
   {
     q: 'What is a good budget?',

@@ -14,7 +14,7 @@ const down = run ? run.probed - up - gated : 0;
 
 <Layout title="mcp-pulse">
   <h1 class="poster">Health and token cost of the MCP registry</h1>
-  <p class="lede">mcp-pulse probes every remote server in the official MCP registry each day. It records if the server answers. It counts the tokens that the tool definitions take from the context window, as Claude counts them.</p>
+  <p class="lede">mcp-pulse probes every remote server in the official MCP registry each day, and the npm and PyPI package servers one seventh at a time. It records if the server answers. It counts the tokens that the tool definitions take from the context window, as Claude counts them.</p>
 
   <section class="panel check-panel" aria-labelledby="check-h">
     <h2 id="check-h" class="poster panel-title">Check a server</h2>
@@ -37,13 +37,13 @@ const down = run ? run.probed - up - gated : 0;
     <>
       <div class="stats">
         <div class="stat"><b>{pct(up, run.probed)}</b><span>alive</span></div>
-        <div class="stat"><b>{pct(gated, run.probed)}</b><span>need auth or payment</span></div>
+        <div class="stat"><b>{pct(gated, run.probed)}</b><span>need auth, payment, env or args</span></div>
         <div class="stat"><b>{pct(down, run.probed)}</b><span>down or broken</span></div>
         <div class="stat"><b>{tokens(cost!.stats.median)}</b><span>median tokens per server{inModel}</span></div>
         <div class="stat"><b>{tokens(cost!.stats.p90)}</b><span>90th percentile</span></div>
         <div class="stat"><b>{tokens(cost!.stats.max)}</b><span>heaviest server</span></div>
       </div>
-      <p class="muted small" style="margin:10px 0 0">{num(run.probed)} remote servers · probed {date(run.probedAt)} · <a href="/statistics">statistics</a></p>
+      <p class="muted small" style="margin:10px 0 0">{num(run.probed)} servers · probed {date(run.probedAt)} · <a href="/statistics">statistics</a></p>
     </>
   )}
 

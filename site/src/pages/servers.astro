@@ -79,7 +79,7 @@ const robots = filtered || page > 1 || sort !== DEFAULT_SORT ? 'noindex, follow'
 
 <Layout title={title} robots={robots}>
   <p class="kicker">{run ? `probed ${run.probedAt.slice(0, 10)}` : ''}</p>
-  <h1 class="poster">{host ? host : status ? `${label(status)} servers` : q ? `Servers matching “${q}”` : 'Every remote server'}</h1>
+  <h1 class="poster">{host ? host : status ? `${label(status)} servers` : q ? `Servers matching “${q}”` : 'Every server'}</h1>
 
   <form class="filters servers" method="get" action="/servers" role="search">
     <label>Search
