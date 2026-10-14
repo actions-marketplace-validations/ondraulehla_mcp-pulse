@@ -95,6 +95,10 @@ export interface RunSummary {
   initMs: { median: number; p90: number };
   hosts: number;
   heaviest: Array<{ name: string; toolCount: number; toolsTokens: number; claudeTokens?: number; claudeTokensCc?: number; host: string }>;
+  /** Package (stdio) servers on the board, and how many of them this run probed. */
+  stdioProbed?: number;
+  stdioToday?: number;
+  registryWithPackage?: number;
   /** What changed since the previous run; absent on the first run. */
   changes?: {
     since: string;
