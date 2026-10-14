@@ -56,6 +56,53 @@ const claude = await createClaudeCounter({
   deadline: started + (Number(args['claude-deadline-min']) || 270) * 60_000
 });
 
+async function loadRegistry(): Promise<RegistryEntry[]> {
+  if (existsSync(args.cache)) {
+    const raw = JSON.parse(await readFile(args.cache, 'utf8')) as Array<{ server: RegistryEntry['server']; _meta: Record<string, RegistryEntry['meta']> }>;
+    return raw.map((r) => ({ server: r.server, meta: r._meta['io.modelcontextprotocol.registry/official'] }));
+  }
+  console.error('downloading registry…');
+  const entries = await fetchRegistry({ onPage: (n) => n % 2000 === 0 && console.error(`  ${n} entries`) });
+  await mkdir('data/raw', { recursive: true });
+  await writeFile(args.cache, JSON.stringify(entries.map((e) => ({ server: e.server, _meta: { 'io.modelcontextprotocol.registry/official': e.meta } }))));
+  return entries;
+}
+
+function mulberry32(seed: number) {
+  return () => {
+    seed |= 0;
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function pickTargets(entries: RegistryEntry[]): Target[] {
+  const all: Target[] = [];
+  for (const e of entries) {
+    const remote = primaryRemote(e);
+    if (!remote) continue;
+    all.push({ name: e.server.name, url: remote.url, type: remote.type, host: hostOf(remote.url), updatedAt: e.meta.updatedAt, status: e.meta.status });
+  }
+  if (args.all) return all;
+  const rand = mulberry32(Number(args.seed));
+  for (let i = all.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [all[i], all[j]] = [all[j], all[i]];
+  }
+  const perHostCount = new Map<string, number>();
+  const picked: Target[] = [];
+  for (const t of all) {
+    const n = perHostCount.get(t.host) ?? 0;
+    if (n >= perHost) continue;
+    perHostCount.set(t.host, n + 1);
+    picked.push(t);
+    if (picked.length >= sampleSize) break;
+  }
+  return picked;
+}
+
 /** Runs probes with a global concurrency limit and at most one in flight per host. */
 async function runAll(targets: Target[]): Promise<Array<Target & { result: ProbeResult; payloadHash?: string }>> {
   const out: Array<Target & { result: ProbeResult; payloadHash?: string }> = [];
