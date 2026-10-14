@@ -37,7 +37,8 @@ const previous = args.previous ? ((JSON.parse(await readFile(args.previous, 'utf
  * latencies, which differ on every run and would turn every row into a write.
  */
 function fingerprint(s: ServerRow): string {
-  const { probedAt: _probedAt, initMs: _initMs, toolsMs: _toolsMs, payloadHash: _payloadHash, ...rest } = s;
+  // The error text is informational and often carries ids or timestamps; it is written only when the result changes.
+  const { probedAt: _probedAt, initMs: _initMs, toolsMs: _toolsMs, payloadHash: _payloadHash, error: _error, ...rest } = s;
   return JSON.stringify(rest);
 }
 const previousByName = new Map((previous ?? []).map((s) => [s.name, fingerprint(s)]));
@@ -104,7 +105,7 @@ function narrowUpdates(rows: ServerRow[]): string[] {
     const after = serverValues(s);
     // The two latencies differ on every probe and sit in two indexes each. They are written only when the result changed; the probes table keeps the fresh value.
     const statusChanged = s.status !== previousRows.get(s.name)!.status;
-    const changed = serverColumns.filter((c, i) => c !== 'name' && lit(before[i]) !== lit(after[i]) && (statusChanged || (c !== 'init_ms' && c !== 'tools_ms')));
+    const changed = serverColumns.filter((c, i) => c !== 'name' && lit(before[i]) !== lit(after[i]) && (statusChanged || (c !== 'init_ms' && c !== 'tools_ms' && c !== 'error')));
     if (!changed.length) continue;
     const key = changed.join(',');
     const g = groups.get(key) ?? groups.set(key, { columns: changed, values: [] }).get(key)!;
@@ -125,15 +126,23 @@ const serverStatements = [
   ...multiInsert('servers', serverColumns, newServers.map(serverValues), 'INSERT', upsertSuffix('name', serverColumns)),
   ...narrowUpdates(changedServers)
 ];
-const probeRows = servers.map((s) => [s.name, s.probedAt, s.status, s.initMs, s.toolCount, s.toolsTokens, s.claudeTokens]);
+/** History gets a row when the result, the tool count or a token count changed; a new registry entry gets its first row. */
+const probeRows = servers
+  .filter((s) => {
+    const p = previousRows.get(s.name);
+    return !p || p.status !== s.status || p.toolCount !== s.toolCount || p.toolsTokens !== s.toolsTokens || p.claudeTokens !== s.claudeTokens;
+  })
+  .map((s) => [s.name, s.probedAt, s.status, s.initMs, s.toolCount, s.toolsTokens, s.claudeTokens]);
 const dead = (b: Record<string, number>) => Object.entries(b).filter(([k]) => k !== 'ok' && !GATED_STATUSES.has(k)).reduce((a, [, n]) => a + n, 0);
 const changedHosts = new Set(servers.map((s) => s.host));
+// Hosts are compared without the run date, which would differ every day.
+const hostKey = (h: (typeof hosts)[number]) => JSON.stringify({ ...h, probedAt: undefined });
 const previousHosts = args['previous-hosts'] && existsSync(args['previous-hosts'])
-  ? new Map((JSON.parse(await readFile(args['previous-hosts'], 'utf8')) as typeof hosts).map((h) => [h.host, JSON.stringify(h)]))
+  ? new Map((JSON.parse(await readFile(args['previous-hosts'], 'utf8')) as typeof hosts).map((h) => [h.host, hostKey(h)]))
   : null;
 const hostRows = hosts
   .filter((h) => !previous || changedHosts.has(h.host))
-  .filter((h) => !previousHosts || previousHosts.get(h.host) !== JSON.stringify(h))
+  .filter((h) => !previousHosts || previousHosts.get(h.host) !== hostKey(h))
   .map((h) => [h.host, h.servers, h.byStatus.ok ?? 0, (h.byStatus.auth ?? 0) + (h.byStatus.payment ?? 0) + (h.byStatus.newer_protocol ?? 0), dead(h.byStatus), h.uniqueToolsets, h.medianTokens, summary.probedAt]);
 
 const statements = [

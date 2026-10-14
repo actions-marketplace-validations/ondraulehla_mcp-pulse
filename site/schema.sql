@@ -71,14 +71,11 @@ CREATE TABLE IF NOT EXISTS hosts (
 -- index backwards, with the name tie-break reversed, so each sort has one index.
 -- Every index entry is a row written on each update of its columns, so there
 -- are as few as the page needs.
+-- A status change rewrites every index that starts with status, so only the default sort has one.
 CREATE INDEX IF NOT EXISTS servers_tokens_name ON servers (tools_tokens DESC, name);
-CREATE INDEX IF NOT EXISTS servers_status_tokens ON servers (status, tools_tokens DESC, name);
 CREATE INDEX IF NOT EXISTS servers_tools_name ON servers (tool_count DESC, name);
-CREATE INDEX IF NOT EXISTS servers_status_tools ON servers (status, tool_count DESC, name);
 CREATE INDEX IF NOT EXISTS servers_init_name ON servers (init_ms, name);
-CREATE INDEX IF NOT EXISTS servers_status_init ON servers (status, init_ms, name);
 CREATE INDEX IF NOT EXISTS servers_updated_name ON servers (registry_updated_at DESC, name);
-CREATE INDEX IF NOT EXISTS servers_status_updated ON servers (status, registry_updated_at DESC, name);
 CREATE INDEX IF NOT EXISTS servers_claude ON servers (claude_tokens DESC, name);
 CREATE INDEX IF NOT EXISTS servers_status_claude ON servers (status, claude_tokens DESC, name);
 
@@ -134,3 +131,7 @@ DROP INDEX IF EXISTS servers_init_desc;
 DROP INDEX IF EXISTS servers_status_desc;
 DROP INDEX IF EXISTS servers_protocol_desc;
 DROP INDEX IF EXISTS servers_host_desc;
+DROP INDEX IF EXISTS servers_status_tokens;
+DROP INDEX IF EXISTS servers_status_tools;
+DROP INDEX IF EXISTS servers_status_init;
+DROP INDEX IF EXISTS servers_status_updated;

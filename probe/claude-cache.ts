@@ -55,6 +55,8 @@ export async function createClaudeCounter(options: { apiKey?: string; cachePath?
       const measuredAt = new Date().toISOString();
       try {
         const c = await countForServer(tools, name, { apiKey, model, limiter });
+        // The same numbers as before: keep the old date, so the row does not change for nothing.
+        if (cached && cached.tokens === c.tokens && cached.tokensClaudeCode === c.tokensClaudeCode) return { model: c.model, tokens: c.tokens, tokensClaudeCode: c.tokensClaudeCode, measuredAt: cached.measuredAt };
         return { model: c.model, tokens: c.tokens, tokensClaudeCode: c.tokensClaudeCode, measuredAt };
       } catch (e) {
         const message = e instanceof ClaudeCountError ? e.message : String(e);
