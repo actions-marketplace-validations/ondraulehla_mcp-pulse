@@ -22,7 +22,9 @@ const { values: args } = parseArgs({
     /** servers.json of the previous run, for the list of what changed since then and for stdio rows not probed today. */
     previous: { type: 'string' },
     /** A stdio run file from probe/stdio-run.ts: package servers probed in containers. */
-    stdio: { type: 'string' }
+    stdio: { type: 'string' },
+    /** Import even when far fewer servers answered than last time. */
+    force: { type: 'boolean', default: false }
   }
 });
 if (!args.in) throw new Error('--in <probe run json> is required');
@@ -163,6 +165,22 @@ const rows: ServerRow[] = [...run.rows, ...stdioRows].map((r) => {
 });
 
 rows.push(...carried);
+
+/**
+ * A broken runner looks like a mass outage: on 2026-10-14 a run saw 15 049
+ * timeouts instead of 202 and would have marked half the registry down. When
+ * far fewer servers answer than last time, the run is not trusted: no import,
+ * no artifact; the next run tries again. --force skips the check.
+ */
+if (previousForCarry.length && !args.force) {
+  const prevOk = previousForCarry.filter((r) => r.transport !== 'stdio' && r.status === 'ok').length;
+  const nowOk = run.rows.filter((r) => r.result.status === 'ok').length;
+  const timeouts = run.rows.filter((r) => r.result.status === 'timeout').length;
+  if (nowOk < 0.7 * prevOk || timeouts > 0.2 * run.rows.length) {
+    console.error(`::error::This run looks broken: ${nowOk} alive against ${prevOk} last time, ${timeouts} timeouts of ${run.rows.length}. Not importing.`);
+    process.exit(2);
+  }
+}
 
 const siblings = new Map<string, number>();
 for (const r of rows) if (r.toolsetHash) siblings.set(r.toolsetHash, (siblings.get(r.toolsetHash) ?? 0) + 1);
