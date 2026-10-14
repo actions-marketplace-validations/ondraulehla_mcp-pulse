@@ -15,6 +15,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import type { ServerRow } from './build-data.js';
+import { GATED_STATUSES } from '../packages/mcptop/src/index.js';
 
 const { values: args } = parseArgs({
   options: {
@@ -125,7 +126,7 @@ const serverStatements = [
   ...narrowUpdates(changedServers)
 ];
 const probeRows = servers.map((s) => [s.name, s.probedAt, s.status, s.initMs, s.toolCount, s.toolsTokens, s.claudeTokens]);
-const dead = (b: Record<string, number>) => Object.entries(b).filter(([k]) => !['ok', 'auth', 'payment', 'newer_protocol'].includes(k)).reduce((a, [, n]) => a + n, 0);
+const dead = (b: Record<string, number>) => Object.entries(b).filter(([k]) => k !== 'ok' && !GATED_STATUSES.has(k)).reduce((a, [, n]) => a + n, 0);
 const changedHosts = new Set(servers.map((s) => s.host));
 const previousHosts = args['previous-hosts'] && existsSync(args['previous-hosts'])
   ? new Map((JSON.parse(await readFile(args['previous-hosts'], 'utf8')) as typeof hosts).map((h) => [h.host, JSON.stringify(h)]))

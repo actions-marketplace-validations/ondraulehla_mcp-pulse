@@ -11,6 +11,7 @@ import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { parseArgs } from 'node:util';
+import { GATED_STATUSES } from '../packages/mcptop/src/index.js';
 import type { ProbeResult, RegistryEntry } from '../packages/mcptop/src/index.js';
 
 const { values: args } = parseArgs({
@@ -18,8 +19,10 @@ const { values: args } = parseArgs({
     in: { type: 'string' },
     registry: { type: 'string', default: 'data/raw/registry-latest.json' },
     out: { type: 'string', default: 'data/latest' },
-    /** servers.json of the previous run, for the list of what changed since then. */
-    previous: { type: 'string' }
+    /** servers.json of the previous run, for the list of what changed since then and for stdio rows not probed today. */
+    previous: { type: 'string' },
+    /** A stdio run file from probe/stdio-run.ts: package servers probed in containers. */
+    stdio: { type: 'string' }
   }
 });
 if (!args.in) throw new Error('--in <probe run json> is required');
@@ -27,12 +30,24 @@ if (!args.in) throw new Error('--in <probe run json> is required');
 interface RawRow {
   name: string;
   url: string;
-  type: 'streamable-http' | 'sse';
+  type: 'streamable-http' | 'sse' | 'stdio';
   host: string;
   updatedAt: string;
   status: string;
   result: ProbeResult;
   payloadHash?: string;
+}
+
+interface StdioRow {
+  name: string;
+  kind: 'npm' | 'pypi';
+  identifier: string;
+  version?: string;
+  status: string;
+  result?: ProbeResult;
+  error?: string;
+  payloadHash?: string;
+  installMs?: number;
 }
 
 export interface ServerRow {
@@ -41,7 +56,7 @@ export interface ServerRow {
   description?: string;
   url: string;
   host: string;
-  transport: 'streamable-http' | 'sse';
+  transport: 'streamable-http' | 'sse' | 'stdio';
   repo?: string;
   website?: string;
   registryStatus: string;
@@ -81,8 +96,31 @@ export interface ServerRow {
 const run = JSON.parse(await readFile(args.in, 'utf8')) as { probedAt: string; rows: RawRow[] };
 const registryRaw = JSON.parse(await readFile(args.registry, 'utf8')) as Array<{ server: RegistryEntry['server']; _meta: Record<string, RegistryEntry['meta']> }>;
 const registry = new Map(registryRaw.map((r) => [r.server.name, r.server]));
+const registryMeta = new Map(registryRaw.map((r) => [r.server.name, r._meta['io.modelcontextprotocol.registry/official']]));
 
-const rows: ServerRow[] = run.rows.map((r) => {
+/**
+ * Package servers: the stdio run probes one seventh of them a day, in
+ * containers. Today's rows come from the run file; the rest keep their row
+ * from the previous run while the registry still lists them.
+ */
+const stdioFile = args.stdio && existsSync(args.stdio) ? (JSON.parse(await readFile(args.stdio, 'utf8')) as { probedAt: string; rows: StdioRow[] }) : null;
+const stdioRows: RawRow[] = (stdioFile?.rows ?? []).map((r) => {
+  const kind = r.kind ?? 'npm';
+  const host = kind === 'npm' ? 'npmjs.com' : 'pypi.org';
+  const url = kind === 'npm' ? `npm:${r.identifier}${r.version ? `@${r.version}` : ''}` : `pypi:${r.identifier}${r.version ? `==${r.version}` : ''}`;
+  const result: ProbeResult = r.result ?? { url, transport: 'stdio', probedAt: stdioFile!.probedAt, status: r.status as ProbeResult['status'], latencyMs: {}, error: r.error };
+  result.url = url;
+  result.transport = 'stdio';
+  result.status = r.status as ProbeResult['status'];
+  if (r.status !== 'ok' && r.error && !result.error) result.error = r.error;
+  const meta = registryMeta.get(r.name);
+  return { name: r.name, url, type: 'stdio', host, updatedAt: meta?.updatedAt ?? '', status: meta?.status ?? 'active', result, payloadHash: r.payloadHash };
+});
+const probedNow = new Set([...run.rows, ...stdioRows].map((r) => r.name));
+const previousForCarry = args.previous && existsSync(args.previous) ? (JSON.parse(await readFile(args.previous, 'utf8')) as ServerRow[]) : [];
+const carried: ServerRow[] = previousForCarry.filter((r) => r.transport === 'stdio' && !probedNow.has(r.name) && registry.has(r.name));
+
+const rows: ServerRow[] = [...run.rows, ...stdioRows].map((r) => {
   const s = registry.get(r.name);
   const res = r.result;
   const toolsetHash = res.tools?.length
@@ -124,6 +162,8 @@ const rows: ServerRow[] = run.rows.map((r) => {
   };
 });
 
+rows.push(...carried);
+
 const siblings = new Map<string, number>();
 for (const r of rows) if (r.toolsetHash) siblings.set(r.toolsetHash, (siblings.get(r.toolsetHash) ?? 0) + 1);
 for (const r of rows) if (r.toolsetHash) r.toolsetSiblings = (siblings.get(r.toolsetHash) ?? 1) - 1;
@@ -157,7 +197,7 @@ export interface Changes {
   tokenChanges: Array<{ name: string; before: number; after: number; exact: boolean }>;
   counts: { added: number; removed: number; wentDown: number; cameBack: number; tokenChanges: number };
 }
-const LIVE = new Set(['ok', 'auth', 'payment', 'newer_protocol']);
+const LIVE = new Set(['ok', ...GATED_STATUSES]);
 function diffRuns(previousRows: ServerRow[], current: ServerRow[]): Changes {
   const prev = new Map(previousRows.map((r) => [r.name, r]));
   const now = new Map(current.map((r) => [r.name, r]));
@@ -213,9 +253,12 @@ const summary = {
   probedAt: run.probedAt,
   registryEntries: registryRaw.length,
   registryWithRemote: registryRaw.filter((r) => r.server.remotes?.length).length,
+  registryWithPackage: registryRaw.filter((r) => !r.server.remotes?.length && r.server.packages?.some((p) => p.registryType === 'npm' || p.registryType === 'pypi')).length,
+  stdioProbed: rows.filter((r) => r.transport === 'stdio').length,
+  stdioToday: stdioRows.length,
   probed: rows.length,
   byStatus: count(rows, (r) => r.status),
-  reachable: ok.length + rows.filter((r) => r.status === 'auth' || r.status === 'payment' || r.status === 'newer_protocol').length,
+  reachable: ok.length + rows.filter((r) => GATED_STATUSES.has(r.status)).length,
   ok: ok.length,
   uniqueToolsets,
   duplicateServers: ok.length - uniqueToolsets,

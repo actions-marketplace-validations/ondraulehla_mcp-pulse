@@ -1,4 +1,5 @@
 import { env } from 'cloudflare:workers';
+import { GATED_STATUSES } from '../../../packages/mcptop/src/types.ts';
 
 export interface ServerRecord {
   name: string;
@@ -329,7 +330,7 @@ export async function listServers(query: ListQuery): Promise<ListResult> {
     binds.push(match);
   }
   if (query.status === 'down') {
-    where.push("status NOT IN ('ok', 'auth', 'payment', 'newer_protocol')");
+    where.push(`status NOT IN ('ok', ${[...GATED_STATUSES].map((s) => `'${s}'`).join(', ')})`);
   } else if (query.status) {
     where.push('status = ?');
     binds.push(query.status);
@@ -342,7 +343,7 @@ export async function listServers(query: ListQuery): Promise<ListResult> {
     where.push('protocol_version = ?');
     binds.push(query.protocol);
   }
-  if (query.transport === 'sse' || query.transport === 'streamable-http') {
+  if (query.transport === 'sse' || query.transport === 'streamable-http' || query.transport === 'stdio') {
     where.push('transport = ?');
     binds.push(query.transport);
   }

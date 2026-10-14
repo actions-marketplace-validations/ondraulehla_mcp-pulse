@@ -1,0 +1,97 @@
+name: Package servers (stdio)
+# Probes one seventh of the npm and PyPI servers in the registry each day, each
+# package in its own container with the network off. No secrets in this
+# workflow: the daily probe picks up the artifact and counts tokens.
+on:
+  schedule:
+    - cron: '41 1 * * *'
+  workflow_dispatch:
+    inputs:
+      shard:
+        description: 'Day of the seven-day cycle (0-6), empty = today'
+        required: false
+        default: ''
+      sample:
+        description: 'Probe only this many packages per part (testing)'
+        required: false
+        default: ''
+concurrency:
+  group: stdio-probe
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w packages/mcptop && (cd packages/mcptop && npm pack --pack-destination ../../probe/stdio)
+      - run: docker build -t mcp-pulse-stdio probe/stdio && docker save mcp-pulse-stdio | gzip > image.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: stdio-image
+          path: image.tar.gz
+          retention-days: 1
+  probe:
+    needs: image
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        part: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: stdio-image
+      - run: docker load < image.tar.gz
+      - name: Download the registry
+        run: node --import tsx probe/fetch-registry.ts
+      - name: Probe this part of today's shard
+        run: |
+          shard="${{ inputs.shard }}"; [ -z "$shard" ] && shard=$(( $(date -u +%j) % 7 ))
+          sample="${{ inputs.sample }}"
+          node --import tsx probe/stdio-run.ts --kind npm,pypi --shard "$shard" --part "${{ matrix.part }}/20" ${sample:+--sample "$sample"} --concurrency 2 --out "data/raw/stdio-part-${{ matrix.part }}.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: stdio-part-${{ matrix.part }}
+          path: data/raw/stdio-part-${{ matrix.part }}.json
+          retention-days: 3
+          compression-level: 9
+  merge:
+    needs: probe
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: stdio-part-*
+          path: parts
+      - name: Join the parts
+        run: |
+          node -e '
+            const fs = require("fs"), path = require("path");
+            const rows = [];
+            for (const d of fs.readdirSync("parts")) for (const f of fs.readdirSync(path.join("parts", d))) rows.push(...JSON.parse(fs.readFileSync(path.join("parts", d, f), "utf8")).rows);
+            const byStatus = {};
+            for (const r of rows) byStatus[r.status] = (byStatus[r.status] ?? 0) + 1;
+            fs.writeFileSync("stdio-run.json", JSON.stringify({ probedAt: new Date().toISOString(), summary: { probed: rows.length, byStatus }, rows }));
+            console.log(JSON.stringify({ probed: rows.length, byStatus }));
+          '
+      - uses: actions/upload-artifact@v4
+        with:
+          name: stdio-${{ github.run_id }}
+          path: stdio-run.json
+          retention-days: 30
+          compression-level: 9
