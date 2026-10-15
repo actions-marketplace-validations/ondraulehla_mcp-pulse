@@ -12,7 +12,7 @@ export const prerender = true;
   <p>
     The probe reads the <a href="https://registry.modelcontextprotocol.io" rel="noopener">official MCP registry</a>. It uses the latest version of each server.
     It takes the first <code>streamable-http</code> remote. If the server has only an <code>sse</code> remote, it takes that one.
-    Servers that ship only as a package on npm or PyPI are probed too, one seventh of them each day: the package is installed in a container with the network on and no lifecycle scripts, then started with the network off and placeholder values for the environment variables the registry entry lists. “needs env”, “needs args” and “needs network” mean the server started but wants a real credential, an argument or a network. “crashed on start”, “install failed” and “no executable” are what they say. OCI and MCPB packages are not probed.
+    Servers that ship only as a package on npm or PyPI are probed too: the package is installed in a container with the network on and no lifecycle scripts, then started with the network off and placeholder values for the environment variables the registry entry lists. “needs env”, “needs args” and “needs network” mean the server started but wants a real credential, an argument or a network. “crashed on start”, “install failed” and “no executable” are what they say. OCI and MCPB packages are not probed.
   </p>
 
   <h2>How we probe a server</h2>
