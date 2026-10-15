@@ -7,7 +7,7 @@ Token counts: claudeTokens is exact. It comes from the Anthropic count_tokens en
 ## Pages
 - https://mcpcost.ulehla.dev/ : overview and a live check form
 - https://mcpcost.ulehla.dev/tokens : how many context tokens an MCP server costs, with current percentiles
-- Package (stdio) servers from npm and PyPI are probed too, one seventh of them each day, in a container with the network off; their page shows the npx or uvx command.
+- Package (stdio) servers from npm and PyPI are probed too, in a container with the network off; their page shows the npx or uvx command.
 - https://mcpcost.ulehla.dev/s/<name>.xml : Atom feed of one server, an entry for every probe that changed its result, tool count or token cost
 - https://mcpcost.ulehla.dev/changes : what changed since the previous run (new, removed, down, back, tool sets that grew or shrank); Atom feed at /changes.xml
 - https://mcpcost.ulehla.dev/s/<registry name> : one server, for example https://mcpcost.ulehla.dev/s/com.replynodes/mcp

@@ -14,7 +14,7 @@ const down = run ? run.probed - up - gated : 0;
 
 <Layout title="mcpcost">
   <h1 class="poster">Health and token cost of the MCP registry</h1>
-  <p class="lede">mcpcost probes every remote server in the official MCP registry each day, and the npm and PyPI package servers one seventh at a time. It records if the server answers. It counts the tokens that the tool definitions take from the context window, as Claude counts them.</p>
+  <p class="lede">mcpcost probes every server in the official MCP registry each day: remote servers over HTTP, npm and PyPI packages in a container. It records if the server answers. It counts the tokens that the tool definitions take from the context window, as Claude counts them.</p>
 
   <section class="panel check-panel" aria-labelledby="check-h">
     <h2 id="check-h" class="poster panel-title">Check a server</h2>
