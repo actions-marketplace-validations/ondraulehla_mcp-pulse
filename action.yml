@@ -1,4 +1,4 @@
-name: 'mcpcost: token budget for MCP servers'
+name: 'MCPCost: token budget for MCP servers'
 description: 'Token cost of the MCP servers in your config: a job summary per server, and a failed job above a budget.'
 author: 'Ondřej Úlehla'
 branding:
