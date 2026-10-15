@@ -11,7 +11,7 @@ Every MCP server you configure hands your agent its tool definitions at the star
 ```
 $ npx mcptop --config .mcp.json --tools 3
 
-mcptop 0.1.3 · tool definitions your agent loads before the first prompt
+mcptop 0.1.4 · tool definitions your agent loads before the first prompt
   .mcp.json
 
   server      source     result               tools  tokens  of 200k
@@ -56,6 +56,14 @@ mcptop --stdio "<command args>"  measure one local server (repeatable)
 ```
 
 `--budget` makes it a CI check: commit your `.mcp.json`, run `npx mcptop --budget 30000` in the pipeline, and a pull request that adds a 40 000-token server fails.
+
+## As an MCP server
+
+```json
+{ "mcpServers": { "mcptop": { "command": "npx", "args": ["-y", "mcptop", "mcp"] } } }
+```
+
+`mcptop mcp` serves the same measurements over stdio, so an agent can check a server before it is added to a config. Four tools: `measure_server` (a remote URL or a local command, probed now), `measure_config` (every server in a config file), `lookup_server` and `search_servers` (the public board, which probes the whole registry daily). With `ANTHROPIC_API_KEY` in the environment the counts are exact. The repository's `Dockerfile` builds the same server for containers.
 
 ## How tokens are counted
 

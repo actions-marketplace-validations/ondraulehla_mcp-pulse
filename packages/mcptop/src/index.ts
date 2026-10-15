@@ -13,3 +13,4 @@ export { countClaudeTokens, countForServer, claudeCodePrefix, toApiTools, create
 export type { ClaudeCountOptions, ClaudeCount, Limiter } from './claude.js';
 export type * from './types.js';
 export { GATED_STATUSES } from './types.js';
+export { buildServer } from './mcp.js';

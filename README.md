@@ -21,6 +21,7 @@ npx mcptop                     # reads Claude Code, Claude Desktop, Cursor, VS C
 npx mcptop --config .mcp.json  # one file
 npx mcptop --budget 30000      # exit 1 when the total is above the budget, for CI
 npx mcptop --claude            # exact counts from the Anthropic count_tokens endpoint (free, needs ANTHROPIC_API_KEY)
+npx mcptop mcp                 # the same measurements as an MCP server over stdio, for your agent
 ```
 
 It starts every configured server the way your client does, lists the tools and prints the token cost per server and in total. See [packages/mcptop](packages/mcptop/README.md).

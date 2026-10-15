@@ -13,6 +13,7 @@ const HELP = `mcptop ${VERSION}: how many tokens do your MCP servers cost before
 
 Usage
   mcptop [options]                 measure every server in the configs it can find
+  mcptop mcp                       serve the same measurements as an MCP server over stdio
   mcptop --config <file>           measure one config file (repeatable)
   mcptop --url <url>               measure one remote server (repeatable)
   mcptop --stdio "<command args>"  measure one local server (repeatable)
@@ -43,6 +44,11 @@ interface Row {
 }
 
 export async function main(argv: string[]): Promise<number> {
+  if (argv[0] === 'mcp') {
+    const { serveStdio } = await import('./mcp.js');
+    await serveStdio();
+    return new Promise(() => undefined);
+  }
   const { values } = parseArgs({
     args: argv,
     options: {
