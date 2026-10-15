@@ -11,7 +11,7 @@ const cli = fileURLToPath(new URL('../src/cli.ts', import.meta.url));
 const fixture = fileURLToPath(new URL('./fixtures/stdio-server.mjs', import.meta.url));
 
 async function configWith(servers: Record<string, unknown>): Promise<string> {
-  const dir = await mkdtemp(path.join(tmpdir(), 'mcp-pulse-cli-'));
+  const dir = await mkdtemp(path.join(tmpdir(), 'mcpcost-cli-'));
   const file = path.join(dir, 'mcp.json');
   await writeFile(file, JSON.stringify({ mcpServers: servers }));
   return file;
@@ -38,7 +38,7 @@ describe('cli', () => {
     const file = await configWith({
       local: { command: process.execPath, args: [fixture] },
       off: { command: 'never', disabled: true },
-      missing: { command: 'definitely-not-a-command-mcp-pulse' }
+      missing: { command: 'definitely-not-a-command-mcpcost' }
     });
     const { code, stdout } = await exec(['--config', file]);
     expect(code).toBe(0);
@@ -78,8 +78,8 @@ describe('cli', () => {
   });
 
   it('runs when invoked through a symlink, like the npm bin', async () => {
-    const dir = await mkdtemp(path.join(tmpdir(), 'mcp-pulse-bin-'));
-    const link = path.join(dir, 'mcptop');
+    const dir = await mkdtemp(path.join(tmpdir(), 'mcpcost-bin-'));
+    const link = path.join(dir, 'mcpcost');
     await symlink(cli, link);
     const { stdout } = await run(process.execPath, ['--import', 'tsx', link, '--version'], { timeout: 60_000 });
     expect(stdout.trim()).toMatch(/^\d+\.\d+\.\d+$/);

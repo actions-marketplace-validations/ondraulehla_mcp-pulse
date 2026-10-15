@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Pager from '../components/Pager.astro';
 import { latestRun, listServers, SORTS, DEFAULT_SORT, MAX_NUMBERED_PAGE, decodeCursor, encodeCursor, type SortKey } from '../lib/db';
 import { bucket, label, ms, num, tokens, STATUS_LABEL } from '../lib/format';
-import { GATED_STATUSES } from '../../../packages/mcptop/src/types.ts';
+import { GATED_STATUSES } from '../../../packages/mcpcost/src/types.ts';
 
 const p = Astro.url.searchParams;
 const q = (p.get('q') ?? '').trim().slice(0, 80);

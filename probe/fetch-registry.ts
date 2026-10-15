@@ -1,7 +1,7 @@
 /** Downloads the registry into data/raw/registry-latest.json when it is not there yet. */
 import { existsSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
-import { fetchRegistry } from '../packages/mcptop/src/index.js';
+import { fetchRegistry } from '../packages/mcpcost/src/index.js';
 const file = process.argv[2] ?? 'data/raw/registry-latest.json';
 if (existsSync(file)) {
   console.error(`${file} exists`);

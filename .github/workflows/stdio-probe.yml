@@ -30,8 +30,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run build -w packages/mcptop && (cd packages/mcptop && npm pack --pack-destination ../../probe/stdio)
-      - run: docker build -t mcp-pulse-stdio probe/stdio && docker save mcp-pulse-stdio | gzip > image.tar.gz
+      - run: npm run build -w packages/mcpcost && (cd packages/mcpcost && npm pack --pack-destination ../../probe/stdio)
+      - run: docker build -t mcpcost-stdio probe/stdio && docker save mcpcost-stdio | gzip > image.tar.gz
       - uses: actions/upload-artifact@v4
         with:
           name: stdio-image

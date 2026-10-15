@@ -53,7 +53,7 @@ describe('normalizeServers', () => {
 
 describe('discoverConfigs', () => {
   it('finds the files of each client under a fake home and cwd', async () => {
-    const root = await mkdtemp(path.join(tmpdir(), 'mcp-pulse-'));
+    const root = await mkdtemp(path.join(tmpdir(), 'mcpcost-'));
     const home = path.join(root, 'home');
     const cwd = path.join(root, 'proj');
     await mkdir(path.join(cwd, '.cursor'), { recursive: true });

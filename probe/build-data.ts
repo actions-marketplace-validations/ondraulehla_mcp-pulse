@@ -11,8 +11,8 @@ import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { parseArgs } from 'node:util';
-import { GATED_STATUSES } from '../packages/mcptop/src/index.js';
-import type { ProbeResult, RegistryEntry } from '../packages/mcptop/src/index.js';
+import { GATED_STATUSES } from '../packages/mcpcost/src/index.js';
+import type { ProbeResult, RegistryEntry } from '../packages/mcpcost/src/index.js';
 
 const { values: args } = parseArgs({
   options: {

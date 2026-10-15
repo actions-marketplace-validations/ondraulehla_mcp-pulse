@@ -1,7 +1,7 @@
 {
-  "name": "mcptop",
-  "version": "0.1.4",
-  "description": "top for your MCP servers: how many tokens do their tool definitions cost before the first prompt?",
+  "name": "mcpcost",
+  "version": "0.2.0",
+  "description": "What do your MCP servers cost in context tokens? Measures every server in your config, exact counts for Claude, a budget for CI.",
   "keywords": [
     "mcp",
     "model-context-protocol",
@@ -11,14 +11,14 @@
     "agents",
     "claude-code",
     "cursor",
-    "top"
+    "cost"
   ],
-  "homepage": "https://mcp-pulse.ulehla.dev",
-  "bugs": "https://github.com/ondraulehla/mcp-pulse/issues",
+  "homepage": "https://mcpcost.ulehla.dev",
+  "bugs": "https://github.com/ondraulehla/mcpcost/issues",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ondraulehla/mcp-pulse.git",
-    "directory": "packages/mcptop"
+    "url": "git+https://github.com/ondraulehla/mcpcost.git",
+    "directory": "packages/mcpcost"
   },
   "author": "Ondřej Úlehla",
   "license": "MIT",
@@ -26,7 +26,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "mcptop": "dist/cli.js"
+    "mcpcost": "dist/cli.js"
   },
   "files": [
     "dist",

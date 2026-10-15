@@ -5,7 +5,7 @@ export default defineConfig({
   output: 'server',
   adapter: cloudflare({ imageService: 'passthrough' }),
   session: false,
-  site: 'https://mcp-pulse.ulehla.dev',
+  site: 'https://mcpcost.ulehla.dev',
   trailingSlash: 'never',
   build: { format: 'file', inlineStylesheets: 'always' },
   vite: { server: { fs: { allow: ['..'] } } }

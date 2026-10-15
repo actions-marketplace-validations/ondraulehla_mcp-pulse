@@ -6,9 +6,9 @@
 import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
-import { countForServer, createLimiter, ClaudeCountError, CLAUDE_MODEL, toolPayload } from '../packages/mcptop/src/index.js';
-import type { ClaudeTokens } from '../packages/mcptop/src/index.js';
-import type { RawTool } from '../packages/mcptop/src/core.js';
+import { countForServer, createLimiter, ClaudeCountError, CLAUDE_MODEL, toolPayload } from '../packages/mcpcost/src/index.js';
+import type { ClaudeTokens } from '../packages/mcpcost/src/index.js';
+import type { RawTool } from '../packages/mcpcost/src/core.js';
 
 type CachedClaude = ClaudeTokens & { payloadHash?: string };
 

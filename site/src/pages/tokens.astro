@@ -42,15 +42,15 @@ const faq = [
   },
   {
     q: 'How many tokens does one specific MCP server cost?',
-    a: `Each remote server in the registry, and each npm or PyPI package server, has a page at ${site}/s/<registry name>. The page shows the exact cost in ${model}, the cost in Claude Code, the estimate, the tool count and the status. For a server that is not in the registry, ${site}/check probes it now and counts it the same way. In a terminal, npx mcptop measures the servers in your own Claude Code, Claude Desktop, Cursor, VS Code or Windsurf config. With ANTHROPIC_API_KEY set and --claude, mcptop asks the same endpoint.`
+    a: `Each remote server in the registry, and each npm or PyPI package server, has a page at ${site}/s/<registry name>. The page shows the exact cost in ${model}, the cost in Claude Code, the estimate, the tool count and the status. For a server that is not in the registry, ${site}/check probes it now and counts it the same way. In a terminal, npx mcpcost measures the servers in your own Claude Code, Claude Desktop, Cursor, VS Code or Windsurf config. With ANTHROPIC_API_KEY set and --claude, mcpcost asks the same endpoint.`
   },
   {
     q: 'What is a good budget?',
-    a: `Half of all servers cost less than ${num(median)} tokens. A config with a total of a few thousand tokens is cheap. If one server costs more than 20 000 tokens, ask if you need all of its tools. ${num(run ? run.heaviest.filter((h) => weight(h) > 20_000).length : 0)} of the 20 heaviest servers are above that limit. The command npx mcptop --budget 30000 fails a CI run when a config grows past the budget.`
+    a: `Half of all servers cost less than ${num(median)} tokens. A config with a total of a few thousand tokens is cheap. If one server costs more than 20 000 tokens, ask if you need all of its tools. ${num(run ? run.heaviest.filter((h) => weight(h) > 20_000).length : 0)} of the 20 heaviest servers are above that limit. The command npx mcpcost --budget 30000 fails a CI run when a config grows past the budget.`
   },
   {
     q: 'Does a server that needs auth also cost tokens?',
-    a: 'Yes. After you authenticate, it sends its tool definitions like any other server. The board cannot list the tools of a server that refuses clients without credentials. These servers show “needs auth” and no count. mcptop measures them with the headers from your config.'
+    a: 'Yes. After you authenticate, it sends its tool definitions like any other server. The board cannot list the tools of a server that refuses clients without credentials. These servers show “needs auth” and no count. mcpcost measures them with the headers from your config.'
   }
 ];
 const jsonld = {

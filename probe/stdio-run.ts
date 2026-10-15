@@ -2,7 +2,7 @@
  * Prototype: probes npm-packaged (stdio) servers from the registry, each in its
  * own container. Install with the network on, run with it off. Usage:
  *   node --import tsx probe/stdio-run.ts --sample 200 --concurrency 4 --out data/raw/stdio-run.json
- * Needs the image: docker build -t mcp-pulse-stdio probe/stdio
+ * Needs the image: docker build -t mcpcost-stdio probe/stdio
  */
 import { execFile } from 'node:child_process';
 import { mkdtemp, readFile, rm, writeFile, mkdir } from 'node:fs/promises';
@@ -10,9 +10,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { promisify } from 'node:util';
-import type { RegistryEntry, RegistryPackage, ProbeResult } from '../packages/mcptop/src/index.js';
-import { priceTools } from '../packages/mcptop/src/probe.js';
-import type { RawTool } from '../packages/mcptop/src/core.js';
+import type { RegistryEntry, RegistryPackage, ProbeResult } from '../packages/mcpcost/src/index.js';
+import { priceTools } from '../packages/mcpcost/src/probe.js';
+import type { RawTool } from '../packages/mcpcost/src/core.js';
 
 const run = promisify(execFile);
 const { values: args } = parseArgs({
@@ -29,7 +29,7 @@ const { values: args } = parseArgs({
     names: { type: 'string', default: '' },
     concurrency: { type: 'string', default: '4' },
     seed: { type: 'string', default: '7' },
-    image: { type: 'string', default: 'mcp-pulse-stdio' },
+    image: { type: 'string', default: 'mcpcost-stdio' },
     registry: { type: 'string', default: 'data/raw/registry-latest.json' },
     out: { type: 'string', default: 'data/raw/stdio-run.json' },
     'install-timeout': { type: 'string', default: '180000' },
@@ -112,7 +112,7 @@ function buildArgs(pkg: RegistryPackage): { args: string[]; missing: string[] } 
 /** Placeholder values for the environment the server expects, so it starts and lists its tools. */
 function buildEnv(pkg: RegistryPackage): Record<string, string> {
   const env: Record<string, string> = {};
-  for (const v of pkg.environmentVariables ?? []) env[v.name] = v.default ?? (v.isSecret ? 'mcp-pulse-placeholder-secret' : 'mcp-pulse-placeholder');
+  for (const v of pkg.environmentVariables ?? []) env[v.name] = v.default ?? (v.isSecret ? 'mcpcost-placeholder-secret' : 'mcpcost-placeholder');
   return env;
 }
 
@@ -146,7 +146,7 @@ async function install(t: Target, dir: string): Promise<{ command: string[] } | 
   }
   // PyPI: a uv tool install into the work directory; the console script is the command. Python 3.12 first, 3.13 when the package asks for it.
   const spec = t.pkg.version ? `${id}==${t.pkg.version}` : id;
-  const uvCache = join(tmpdir(), 'mcp-pulse-uv-cache');
+  const uvCache = join(tmpdir(), 'mcpcost-uv-cache');
   let lastError = '';
   for (const py of ['3.12', '3.13']) {
     try {
@@ -172,7 +172,7 @@ async function install(t: Target, dir: string): Promise<{ command: string[] } | 
 
 async function probeOne(t: Target): Promise<Row> {
   const row: Row = { name: t.name, kind: t.pkg.registryType as Kind, identifier: t.pkg.identifier, version: t.pkg.version, status: 'error' };
-  const dir = await mkdtemp(join(tmpdir(), 'mcp-pulse-stdio-'));
+  const dir = await mkdtemp(join(tmpdir(), 'mcpcost-stdio-'));
   try {
     const { args: cliArgs, missing } = buildArgs(t.pkg);
     if (missing.length) { row.status = 'needs_args'; row.error = `requires ${missing.join(', ')}`; return row; }

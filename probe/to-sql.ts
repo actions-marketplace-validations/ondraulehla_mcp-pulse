@@ -15,7 +15,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import type { ServerRow } from './build-data.js';
-import { GATED_STATUSES } from '../packages/mcptop/src/index.js';
+import { GATED_STATUSES } from '../packages/mcpcost/src/index.js';
 
 const { values: args } = parseArgs({
   options: {

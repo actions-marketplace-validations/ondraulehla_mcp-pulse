@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { findByUrl } from '../../lib/db';
-import { probeRemoteRaw } from '../../../../packages/mcptop/src/core.ts';
-import { payloadBytes, BYTES_PER_TOKEN } from '../../../../packages/mcptop/src/payload.ts';
+import { probeRemoteRaw } from '../../../../packages/mcpcost/src/core.ts';
+import { payloadBytes, BYTES_PER_TOKEN } from '../../../../packages/mcpcost/src/payload.ts';
 import { liveClaudeCount } from '../../lib/claude';
 
 const g = globalThis as unknown as { __apiChecks?: { minute: number; n: number } };
@@ -19,7 +19,7 @@ function allowed(): boolean {
  */
 export const GET: APIRoute = async ({ url, site }) => {
   const target = (url.searchParams.get('url') ?? '').trim().slice(0, 500);
-  const base = (site ?? new URL('https://mcp-pulse.ulehla.dev')).toString().replace(/\/$/, '');
+  const base = (site ?? new URL('https://mcpcost.ulehla.dev')).toString().replace(/\/$/, '');
   const headers = { 'cache-control': 'public, max-age=60, s-maxage=600', 'access-control-allow-origin': '*' };
   let u: URL;
   try {
@@ -54,7 +54,7 @@ export const GET: APIRoute = async ({ url, site }) => {
       claudeError: claude?.error,
       toolsBytes: bytes,
       toolsTokensEstimate: Math.round(bytes / BYTES_PER_TOKEN),
-      estimateNote: `bytes / ${BYTES_PER_TOKEN}, the registry median; exact o200k count: npx mcptop --url ${result.url}`,
+      estimateNote: `bytes / ${BYTES_PER_TOKEN}, the registry median; exact o200k count: npx mcpcost --url ${result.url}`,
       tools: sized,
       error: result.error,
       probedAt: result.probedAt

@@ -6,8 +6,8 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { parseArgs } from 'node:util';
 import { createClaudeCounter, payloadHash } from './claude-cache.js';
-import type { RawTool } from '../packages/mcptop/src/core.js';
-import type { ProbeResult } from '../packages/mcptop/src/index.js';
+import type { RawTool } from '../packages/mcpcost/src/core.js';
+import type { ProbeResult } from '../packages/mcpcost/src/index.js';
 
 const { values: args } = parseArgs({ options: { in: { type: 'string' }, out: { type: 'string' }, cache: { type: 'string' }, 'deadline-min': { type: 'string', default: '60' } } });
 if (!args.in) throw new Error('--in is required');

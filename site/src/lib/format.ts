@@ -1,4 +1,4 @@
-import { GATED_STATUSES } from '../../../packages/mcptop/src/types.ts';
+import { GATED_STATUSES } from '../../../packages/mcpcost/src/types.ts';
 
 export const STATUS_LABEL: Record<string, string> = {
   ok: 'alive',

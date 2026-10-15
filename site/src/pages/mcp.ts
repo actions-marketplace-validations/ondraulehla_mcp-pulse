@@ -4,19 +4,19 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js';
 import { findByUrl, getServer, latestRun, listServers, SORTS, MAX_NUMBERED_PAGE, decodeCursor, encodeCursor, type SortKey } from '../lib/db';
 import { label } from '../lib/format';
-import { probeRemoteRaw } from '../../../packages/mcptop/src/core.ts';
-import { payloadBytes, BYTES_PER_TOKEN } from '../../../packages/mcptop/src/payload.ts';
+import { probeRemoteRaw } from '../../../packages/mcpcost/src/core.ts';
+import { payloadBytes, BYTES_PER_TOKEN } from '../../../packages/mcpcost/src/payload.ts';
 import { liveClaudeCount } from '../lib/claude';
 
-const SITE = 'https://mcp-pulse.ulehla.dev';
+const SITE = 'https://mcpcost.ulehla.dev';
 
 /**
- * mcp-pulse as an MCP server: three tools over the same data as the board.
+ * mcpcost as an MCP server: three tools over the same data as the board.
  * Stateless, one server instance per request, JSON responses.
  */
 function build(): McpServer {
   const server = new McpServer(
-    { name: 'mcp-pulse', version: '0.1.4' },
+    { name: 'mcpcost', version: '0.2.0' },
     {
       instructions:
         'Health and token cost of every remote server in the official MCP registry, and of its npm and PyPI package servers, probed daily. Use lookup_server for a registry name or URL, search_servers to find servers, check_server to probe a URL that is not in the registry. claudeTokens is the exact count from the Anthropic count_tokens endpoint (claudeTokensClaudeCode with the mcp__<server>__ prefix); toolsTokens is an o200k_base estimate over each tool definition.'
@@ -89,7 +89,7 @@ function build(): McpServer {
         url: result.url, status: result.status, statusLabel: label(result.status), httpStatus: result.httpStatus, authScheme: result.authScheme,
         protocolVersion: result.protocolVersion, serverInfo: result.serverInfo, toolCount: result.toolCount, toolsBytes: bytes,
         claudeTokens: claude?.tokens, claudeTokensClaudeCode: claude?.tokensClaudeCode, claudeModel: claude?.model, claudeError: claude?.error,
-        toolsTokensEstimate: Math.round(bytes / BYTES_PER_TOKEN), estimateNote: 'estimated from schema size at the registry median of 4.42 bytes per token; exact o200k: npx mcptop --url <url>',
+        toolsTokensEstimate: Math.round(bytes / BYTES_PER_TOKEN), estimateNote: 'estimated from schema size at the registry median of 4.42 bytes per token; exact o200k: npx mcpcost --url <url>',
         tools: tools.map((t) => t.name), latencyMs: result.latencyMs, error: result.error
       };
       return { content: [{ type: 'text', text: JSON.stringify(out, null, 2) }], structuredContent: out };

@@ -1,12 +1,12 @@
 /**
  * Tells Bing (and every IndexNow partner) which server pages changed. Usage:
  *   INDEXNOW_KEY=<key> node --import tsx probe/indexnow.ts --changed data/latest/changed.json [--all data/latest/servers.json]
- * The key file must be served at https://mcp-pulse.ulehla.dev/<key>.txt (it lives in site/public).
+ * The key file must be served at https://mcpcost.ulehla.dev/<key>.txt (it lives in site/public).
  */
 import { readFile } from 'node:fs/promises';
 import { parseArgs } from 'node:util';
 
-const { values: args } = parseArgs({ options: { changed: { type: 'string' }, all: { type: 'string' }, host: { type: 'string', default: 'mcp-pulse.ulehla.dev' } } });
+const { values: args } = parseArgs({ options: { changed: { type: 'string' }, all: { type: 'string' }, host: { type: 'string', default: 'mcpcost.ulehla.dev' } } });
 const key = process.env.INDEXNOW_KEY;
 if (!key) {
   console.error('INDEXNOW_KEY is not set, skipping IndexNow.');

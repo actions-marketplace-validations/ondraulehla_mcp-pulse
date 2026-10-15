@@ -1,6 +1,6 @@
 import { env } from 'cloudflare:workers';
-import { countForServer, ClaudeCountError, CLAUDE_MODEL } from '../../../packages/mcptop/src/claude.ts';
-import { payloadBytes, type ToolLike } from '../../../packages/mcptop/src/payload.ts';
+import { countForServer, ClaudeCountError, CLAUDE_MODEL } from '../../../packages/mcpcost/src/claude.ts';
+import { payloadBytes, type ToolLike } from '../../../packages/mcpcost/src/payload.ts';
 
 export interface LiveClaudeCount {
   model: string;

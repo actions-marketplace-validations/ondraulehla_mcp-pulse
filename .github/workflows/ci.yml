@@ -13,7 +13,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npx tsc -p packages/mcptop/tsconfig.json --noEmit
+      - run: npx tsc -p packages/mcpcost/tsconfig.json --noEmit
       - run: npm test --workspaces --if-present
       - run: npm run build -w site
   action:

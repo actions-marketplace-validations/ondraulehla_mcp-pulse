@@ -5,7 +5,7 @@ export const CHUNK = 5_000;
 
 /** A sitemap index: the static pages plus one chunk per 5 000 rowids of the servers table. */
 export const GET: APIRoute = async ({ site }) => {
-  const base = (site ?? new URL('https://mcp-pulse.ulehla.dev')).toString().replace(/\/$/, '');
+  const base = (site ?? new URL('https://mcpcost.ulehla.dev')).toString().replace(/\/$/, '');
   const [run, maxRowid] = await Promise.all([latestRun(), maxServerRowid()]);
   const chunks = Math.max(1, Math.ceil(maxRowid / CHUNK));
   const lastmod = run?.probedAt.slice(0, 10) ?? new Date().toISOString().slice(0, 10);

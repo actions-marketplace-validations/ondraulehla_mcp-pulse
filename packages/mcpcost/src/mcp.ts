@@ -1,5 +1,5 @@
 /**
- * mcptop as an MCP server over stdio: the same measurements as the CLI, for
+ * mcpcost as an MCP server over stdio: the same measurements as the CLI, for
  * an agent that wants to know what a server costs before it is added to a
  * config. Two tools work offline (they probe the server themselves); two ask
  * the public board for registry data.
@@ -12,7 +12,7 @@ import { probeStdio } from './stdio.js';
 import { readConfigFile } from './configs.js';
 import type { ProbeResult } from './types.js';
 
-const BOARD = 'https://mcp-pulse.ulehla.dev';
+const BOARD = 'https://mcpcost.ulehla.dev';
 
 function compact(r: ProbeResult, window: number) {
   return {
@@ -131,7 +131,7 @@ async function call(name: string, a: Args) {
       const nameOrUrl = str(a, 'nameOrUrl');
       if (!nameOrUrl) return fail('Give nameOrUrl.');
       const url = /^https?:\/\//.test(nameOrUrl) ? `${BOARD}/api/check.json?url=${encodeURIComponent(nameOrUrl)}` : `${BOARD}/api/s/${nameOrUrl}.json`;
-      const res = await fetch(url, { headers: { accept: 'application/json', 'user-agent': `mcptop/${VERSION}` } });
+      const res = await fetch(url, { headers: { accept: 'application/json', 'user-agent': `mcpcost/${VERSION}` } });
       if (!res.ok) return fail(`The board has no server ${nameOrUrl} (HTTP ${res.status}). Use measure_server to probe it now.`);
       return text(await res.json());
     }
@@ -144,7 +144,7 @@ async function call(name: string, a: Args) {
       u.searchParams.set('sort', str(a, 'sort') ?? 'claude');
       u.searchParams.set('page', String(num(a, 'page') ?? 1));
       u.searchParams.set('per_page', '20');
-      const res = await fetch(u, { headers: { accept: 'application/json', 'user-agent': `mcptop/${VERSION}` } });
+      const res = await fetch(u, { headers: { accept: 'application/json', 'user-agent': `mcpcost/${VERSION}` } });
       if (!res.ok) return fail(`The board did not answer (HTTP ${res.status}).`);
       return text(await res.json());
     }
@@ -155,11 +155,11 @@ async function call(name: string, a: Args) {
 
 export function buildServer(): Server {
   const server = new Server(
-    { name: 'mcptop', version: VERSION },
+    { name: 'mcpcost', version: VERSION },
     {
       capabilities: { tools: {} },
       instructions:
-        'Measures what MCP servers cost in context tokens. measure_server probes one server (remote URL or local command) now. measure_config measures every server in a config file. lookup_server and search_servers read the public board at mcp-pulse.ulehla.dev, which probes the whole registry daily. Token numbers are o200k_base estimates; with ANTHROPIC_API_KEY set, claudeTokens is the exact count from the free count_tokens endpoint.'
+        'Measures what MCP servers cost in context tokens. measure_server probes one server (remote URL or local command) now. measure_config measures every server in a config file. lookup_server and search_servers read the public board at mcpcost.ulehla.dev, which probes the whole registry daily. Token numbers are o200k_base estimates; with ANTHROPIC_API_KEY set, claudeTokens is the exact count from the free count_tokens endpoint.'
     }
   );
   server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: TOOLS.map((t) => ({ ...t })) }));

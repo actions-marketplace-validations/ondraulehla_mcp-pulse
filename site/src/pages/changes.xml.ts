@@ -6,7 +6,7 @@ const num = (n: number) => n.toLocaleString('en-US').replace(/,/g, ' ');
 
 /** One Atom entry per run: the counts and the biggest tool set changes. */
 export const GET: APIRoute = async ({ site }) => {
-  const base = (site ?? new URL('https://mcp-pulse.ulehla.dev')).toString().replace(/\/$/, '');
+  const base = (site ?? new URL('https://mcpcost.ulehla.dev')).toString().replace(/\/$/, '');
   const runs = (await recentRuns(14)).filter((r) => r.changes);
   const entries = runs.map((run) => {
     const c = run.changes!;
@@ -26,13 +26,13 @@ export const GET: APIRoute = async ({ site }) => {
   const updated = runs[0]?.probedAt ?? new Date().toISOString();
   const xml = `<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>mcp-pulse: what changed in the MCP registry</title>
+  <title>mcpcost: what changed in the MCP registry</title>
   <subtitle>Daily: new and removed servers, servers that went down or came back, tool sets that grew or shrank.</subtitle>
   <id>${base}/changes.xml</id>
   <link href="${base}/changes.xml" rel="self"/>
   <link href="${base}/changes"/>
   <updated>${updated}</updated>
-  <author><name>mcp-pulse</name></author>
+  <author><name>mcpcost</name></author>
 ${entries.join('\n')}
 </feed>
 `;

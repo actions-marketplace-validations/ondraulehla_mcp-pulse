@@ -1,5 +1,5 @@
 {
-  "name": "mcp-pulse-monorepo",
+  "name": "mcpcost-monorepo",
   "private": true,
   "type": "module",
   "workspaces": [

@@ -6,7 +6,7 @@ const escape = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').rep
 
 /** One chunk of server pages, or the handful of static pages for "pages". */
 export const GET: APIRoute = async ({ params, site }) => {
-  const base = (site ?? new URL('https://mcp-pulse.ulehla.dev')).toString().replace(/\/$/, '');
+  const base = (site ?? new URL('https://mcpcost.ulehla.dev')).toString().replace(/\/$/, '');
   const headers = { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=3600, s-maxage=86400' };
   const run = await latestRun();
   const lastmod = run?.probedAt.slice(0, 10) ?? new Date().toISOString().slice(0, 10);

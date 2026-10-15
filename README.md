@@ -1,12 +1,12 @@
-# mcp-pulse
+# mcpcost
 
-[![CI](https://github.com/ondraulehla/mcp-pulse/actions/workflows/ci.yml/badge.svg)](https://github.com/ondraulehla/mcp-pulse/actions/workflows/ci.yml) [![npm mcptop](https://img.shields.io/npm/v/mcptop?label=mcptop)](https://www.npmjs.com/package/mcptop) [![license](https://img.shields.io/github/license/ondraulehla/mcp-pulse)](LICENSE)
+[![CI](https://github.com/ondraulehla/mcpcost/actions/workflows/ci.yml/badge.svg)](https://github.com/ondraulehla/mcpcost/actions/workflows/ci.yml) [![npm mcpcost](https://img.shields.io/npm/v/mcpcost?label=mcpcost)](https://www.npmjs.com/package/mcpcost) [![license](https://img.shields.io/github/license/ondraulehla/mcpcost)](LICENSE)
 
 **Is that MCP server alive, and what does it cost your context window?**
 
-**Live board: [mcp-pulse.ulehla.dev](https://mcp-pulse.ulehla.dev)**
+**Live board: [mcpcost.ulehla.dev](https://mcpcost.ulehla.dev)**
 
-mcp-pulse probes every remote server in the [official MCP registry](https://registry.modelcontextprotocol.io) and records, for each one:
+mcpcost probes every remote server in the [official MCP registry](https://registry.modelcontextprotocol.io) and records, for each one:
 
 - whether it answers `initialize` and `tools/list`, and how fast
 - the protocol version it negotiates
@@ -14,24 +14,24 @@ mcp-pulse probes every remote server in the [official MCP registry](https://regi
 - whether it asks for payment (HTTP 402)
 - how many tools it has and how many tokens their definitions cost
 
-## mcptop: what do your own servers cost?
+## mcpcost: what do your own servers cost?
 
 ```bash
-npx mcptop                     # reads Claude Code, Claude Desktop, Cursor, VS Code, Windsurf and Gemini CLI configs
-npx mcptop --config .mcp.json  # one file
-npx mcptop --budget 30000      # exit 1 when the total is above the budget, for CI
-npx mcptop --claude            # exact counts from the Anthropic count_tokens endpoint (free, needs ANTHROPIC_API_KEY)
-npx mcptop mcp                 # the same measurements as an MCP server over stdio, for your agent
+npx mcpcost                     # reads Claude Code, Claude Desktop, Cursor, VS Code, Windsurf and Gemini CLI configs
+npx mcpcost --config .mcp.json  # one file
+npx mcpcost --budget 30000      # exit 1 when the total is above the budget, for CI
+npx mcpcost --claude            # exact counts from the Anthropic count_tokens endpoint (free, needs ANTHROPIC_API_KEY)
+npx mcpcost mcp                 # the same measurements as an MCP server over stdio, for your agent
 ```
 
-It starts every configured server the way your client does, lists the tools and prints the token cost per server and in total. See [packages/mcptop](packages/mcptop/README.md).
+It starts every configured server the way your client does, lists the tools and prints the token cost per server and in total. See [packages/mcpcost](packages/mcpcost/README.md).
 
 ### In CI, as a GitHub Action
 
-[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-mcptop-e8571f?logo=github)](https://github.com/marketplace/actions/mcptop-token-budget-for-mcp-servers)
+[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-mcpcost-e8571f?logo=github)](https://github.com/marketplace/actions/mcpcost-token-budget-for-mcp-servers)
 
 ```yaml
-- uses: ondraulehla/mcp-pulse@v1
+- uses: ondraulehla/mcpcost@v1
   with:
     config: .mcp.json   # one or more config files, one per line
     budget: 30000       # fail when the tool definitions cost more than this
@@ -41,7 +41,7 @@ The job summary gets a table with every server, its result and its cost, plus th
 
 ## The board
 
-[mcp-pulse.ulehla.dev](https://mcp-pulse.ulehla.dev) is rendered on the edge from a D1 database, ships no JavaScript, and refreshes every night.
+[mcpcost.ulehla.dev](https://mcpcost.ulehla.dev) is rendered on the edge from a D1 database, ships no JavaScript, and refreshes every night.
 
 - **Overview**: the share of servers that answer, token cost percentiles, and a form to check any server
 - **Check**: probes one URL live, with the same steps as the daily run; the exact token count runs in the browser
@@ -53,13 +53,13 @@ The job summary gets a table with every server, its result and its cost, plus th
 ## For agents and scripts
 
 - JSON: `/api/s/<name>.json`, `/api/servers.json?q=…&status=ok&sort=tokens`, `/api/check.json?url=…`, `/api/summary.json`
-- MCP server over Streamable HTTP, no auth: `https://mcp-pulse.ulehla.dev/mcp` with the tools `lookup_server`, `search_servers`, `check_server`, `registry_summary`. The manifest for the registry is `site/server.json`.
+- MCP server over Streamable HTTP, no auth: `https://mcpcost.ulehla.dev/mcp` with the tools `lookup_server`, `search_servers`, `check_server`, `registry_summary`. The manifest for the registry is `site/server.json`.
 - `/llms.txt` lists all of it. `/tokens` answers the general question: how many context tokens does an MCP server cost.
 
 Each server on the board gets a page and a badge:
 
 ```markdown
-[![mcp-pulse](https://mcp-pulse.ulehla.dev/badge/io.github.you/your-server.svg)](https://mcp-pulse.ulehla.dev/s/io.github.you/your-server)
+[![mcpcost](https://mcpcost.ulehla.dev/badge/io.github.you/your-server.svg)](https://mcpcost.ulehla.dev/s/io.github.you/your-server)
 ```
 
 ## First full run, 2026-10-03
@@ -107,7 +107,7 @@ registry ──▶ probe/run.ts ──▶ data/raw/probe-run.json
                               site/ (Astro on Workers) ◀────────┘
 ```
 
-- `packages/mcptop/` the library and the CLI `mcptop`: registry client, remote and stdio probe, config discovery, token counting
+- `packages/mcpcost/` the library and the CLI `mcpcost`: registry client, remote and stdio probe, config discovery, token counting
 - `probe/` the batch runner and the data pipeline
 - `site/` the board: Astro 7 with the Cloudflare adapter on Workers, rendered from D1 with FTS5 search, SVG badges, no client JavaScript
 - `.github/workflows/probe.yml` runs the whole pipeline daily and commits `summary.json` and `hosts.json`
@@ -121,7 +121,7 @@ registry ──▶ probe/run.ts ──▶ data/raw/probe-run.json
 - **Estimate.** Each tool is serialised as compact JSON with `name`, `description` and `input_schema`, and counted with the `o200k_base` tokenizer. The exact count is about 1.9 times the estimate at the median. The estimate needs no key and is the same for every server.
 - **Same tool set.** A hash of the sorted tool names and schema sizes marks servers that serve identical tools under different names.
 - **Timeouts.** 15 seconds per request. At most one probe runs against a host at a time.
-- **Identification.** Every request carries the User-Agent `mcp-pulse/<version> (+https://github.com/ondraulehla/mcp-pulse)`. To exclude a server, open an issue with its registry name.
+- **Identification.** Every request carries the User-Agent `mcpcost/<version> (+https://github.com/ondraulehla/mcpcost)`. To exclude a server, open an issue with its registry name.
 
 ## Run it
 
@@ -142,7 +142,7 @@ npm run db:schema:local && npm run db:import:local
 npm run dev
 ```
 
-Deploying needs a Cloudflare account with a D1 database named `mcp-pulse` (`wrangler d1 create mcp-pulse`, then put the id in `site/wrangler.jsonc`). The workflows expect the repository secrets `CLOUDFLARE_API_TOKEN` (Workers Scripts: Edit, D1: Edit) and `CLOUDFLARE_ACCOUNT_ID`.
+Deploying needs a Cloudflare account with a D1 database named `mcpcost` (`wrangler d1 create mcpcost`, then put the id in `site/wrangler.jsonc`). The workflows expect the repository secrets `CLOUDFLARE_API_TOKEN` (Workers Scripts: Edit, D1: Edit) and `CLOUDFLARE_ACCOUNT_ID`.
 
 ## Licence
 

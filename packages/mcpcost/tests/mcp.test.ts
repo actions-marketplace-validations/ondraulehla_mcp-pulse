@@ -3,7 +3,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { buildServer } from '../src/mcp.js';
 
-describe('mcptop as an MCP server', () => {
+describe('mcpcost as an MCP server', () => {
   it('lists its four tools and answers measure_server for a local command', async () => {
     const server = buildServer();
     const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();

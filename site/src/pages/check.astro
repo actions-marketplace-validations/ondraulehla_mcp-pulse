@@ -2,10 +2,10 @@
 import Layout from '../layouts/Layout.astro';
 import { getServer, findByUrl, serversOnHost } from '../lib/db';
 import { bucket, label, ms, num, modelName } from '../lib/format';
-import { probeRemoteRaw } from '../../../packages/mcptop/src/core.ts';
-import { payloadBytes, toolPayload, BYTES_PER_TOKEN } from '../../../packages/mcptop/src/payload.ts';
+import { probeRemoteRaw } from '../../../packages/mcpcost/src/core.ts';
+import { payloadBytes, toolPayload, BYTES_PER_TOKEN } from '../../../packages/mcpcost/src/payload.ts';
 import { liveClaudeCount, type LiveClaudeCount } from '../lib/claude';
-import { claudeCodePrefix } from '../../../packages/mcptop/src/claude.ts';
+import { claudeCodePrefix } from '../../../packages/mcpcost/src/claude.ts';
 
 const raw = (Astro.url.searchParams.get('target') ?? '').trim().slice(0, 500);
 const headers = Astro.response.headers;
@@ -74,7 +74,7 @@ const site = Astro.site?.toString().replace(/\/$/, '') ?? '';
 
   {view.kind === 'not-found' && <p class="frame pad">The registry has no server named <code>{view.name}</code>. Enter the server URL to probe it now.</p>}
   {view.kind === 'invalid' && <p class="frame pad">{view.reason}</p>}
-  {view.kind === 'busy' && <p class="frame pad">Too many checks run now. Try again in one minute, or run <code>npx mcptop --url …</code>.</p>}
+  {view.kind === 'busy' && <p class="frame pad">Too many checks run now. Try again in one minute, or run <code>npx mcpcost --url …</code>.</p>}
 
   {view.kind === 'probed' && (
     <section id="result" data-tokens-known="false">
@@ -121,7 +121,7 @@ const site = Astro.site?.toString().replace(/\/$/, '') ?? '';
             </dd>
       </dl>
 
-      <p class="muted small">The same measurement in a terminal: <code>npx mcptop --url {view.url}</code></p>
+      <p class="muted small">The same measurement in a terminal: <code>npx mcpcost --url {view.url}</code></p>
     </section>
   )}
 

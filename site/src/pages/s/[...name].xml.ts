@@ -14,7 +14,7 @@ export const GET: APIRoute = async ({ params, site }) => {
   const name = (params.name ?? '').replace(/\.xml$/, '');
   const server = name ? await getServer(name) : null;
   if (!server) return new Response('Not found', { status: 404 });
-  const base = (site ?? new URL('https://mcp-pulse.ulehla.dev')).toString().replace(/\/$/, '');
+  const base = (site ?? new URL('https://mcpcost.ulehla.dev')).toString().replace(/\/$/, '');
   const history = await getHistory(name, 30);
   const page = `${base}/s/${name}`;
   const entries = history.map((h, i) => {
@@ -38,13 +38,13 @@ export const GET: APIRoute = async ({ params, site }) => {
   });
   const xml = `<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>${esc(name)} on mcp-pulse</title>
+  <title>${esc(name)} on mcpcost</title>
   <subtitle>Every probe that changed the result, the tool count or the token cost of this MCP server.</subtitle>
   <id>${page}.xml</id>
   <link href="${page}.xml" rel="self"/>
   <link href="${page}"/>
   <updated>${history[0]?.probed_at ?? server.probed_at}</updated>
-  <author><name>mcp-pulse</name></author>
+  <author><name>mcpcost</name></author>
 ${entries.join('\n')}
 </feed>
 `;

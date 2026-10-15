@@ -1,5 +1,5 @@
 import { env } from 'cloudflare:workers';
-import { GATED_STATUSES } from '../../../packages/mcptop/src/types.ts';
+import { GATED_STATUSES } from '../../../packages/mcpcost/src/types.ts';
 
 export interface ServerRecord {
   name: string;

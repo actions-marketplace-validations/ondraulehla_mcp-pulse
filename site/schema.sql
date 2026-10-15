@@ -1,4 +1,4 @@
--- mcp-pulse D1 schema. Apply with:
+-- mcpcost D1 schema. Apply with:
 --   npx wrangler d1 execute mcp-pulse --local --file=schema.sql
 --   npx wrangler d1 execute mcp-pulse --remote --file=schema.sql
 

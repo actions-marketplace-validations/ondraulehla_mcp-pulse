@@ -7,11 +7,11 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { parseArgs } from 'node:util';
-import { fetchRegistry, hostOf, primaryRemote, CLAUDE_MODEL } from '../packages/mcptop/src/index.js';
-import { probeRemoteRaw } from '../packages/mcptop/src/core.js';
-import { priceTools } from '../packages/mcptop/src/probe.js';
+import { fetchRegistry, hostOf, primaryRemote, CLAUDE_MODEL } from '../packages/mcpcost/src/index.js';
+import { probeRemoteRaw } from '../packages/mcpcost/src/core.js';
+import { priceTools } from '../packages/mcpcost/src/probe.js';
 import { createClaudeCounter, payloadHash } from './claude-cache.js';
-import type { ProbeResult, RegistryEntry } from '../packages/mcptop/src/index.js';
+import type { ProbeResult, RegistryEntry } from '../packages/mcpcost/src/index.js';
 
 const { values: args } = parseArgs({
   options: {

@@ -5,7 +5,7 @@ export const prerender = true;
 
 <Layout title="Methodology">
   <p class="kicker">method</p>
-  <h1 class="poster">How mcp-pulse measures</h1>
+  <h1 class="poster">How mcpcost measures</h1>
   <p class="lede">One open-source probe. The same steps for every server.</p>
 
   <h2 style="margin-top:40px">What we probe</h2>
@@ -17,7 +17,7 @@ export const prerender = true;
 
   <h2>How we probe a server</h2>
   <ol>
-    <li>Connect with the official TypeScript SDK. The client name is <code>mcp-pulse</code>. We send no credentials.</li>
+    <li>Connect with the official TypeScript SDK. The client name is <code>mcpcost</code>. We send no credentials.</li>
     <li>Send <code>initialize</code> and <code>notifications/initialized</code>. Record the time to the <code>initialize</code> result, the protocol version, the server name and version, the capabilities and the length of the instructions.</li>
     <li>If the server has tools, call <code>tools/list</code>. Follow the pagination. Record the time and the tools.</li>
     <li>Do not open the standalone GET stream. The probe answers 405 to the SDK's GET. The probe needs no messages from the server. Some servers stop <code>tools/list</code> while that stream is open.</li>
@@ -65,17 +65,17 @@ export const prerender = true;
   <h2>Machine access</h2>
   <p>
     Each server has JSON at <code>/api/s/&lt;name&gt;.json</code>. The list is at <code>/api/servers.json</code>. The live probe is at <code>/api/check.json?url=…</code>. The run summary is at <code>/api/summary.json</code>.
-    The board is also an MCP server: <code>https://mcp-pulse.ulehla.dev/mcp</code> over Streamable HTTP, no auth. Its tools are <code>lookup_server</code>, <code>search_servers</code>, <code>check_server</code> and <code>registry_summary</code>. <a href="/llms.txt">/llms.txt</a> lists all of this.
+    The board is also an MCP server: <code>https://mcpcost.ulehla.dev/mcp</code> over Streamable HTTP, no auth. Its tools are <code>lookup_server</code>, <code>search_servers</code>, <code>check_server</code> and <code>registry_summary</code>. <a href="/llms.txt">/llms.txt</a> lists all of this.
   </p>
 
   <h2>Being a good guest</h2>
   <p>
-    Each request carries the User-Agent <code>mcp-pulse/&lt;version&gt; (+https://github.com/ondraulehla/mcp-pulse)</code>. The probe runs one time each day. It sends no tool calls. It makes at most three requests to each server.
-    To exclude a server, <a href="https://github.com/ondraulehla/mcp-pulse/issues" rel="noopener">open an issue</a> with its registry name.
+    Each request carries the User-Agent <code>mcpcost/&lt;version&gt; (+https://github.com/ondraulehla/mcpcost)</code>. The probe runs one time each day. It sends no tool calls. It makes at most three requests to each server.
+    To exclude a server, <a href="https://github.com/ondraulehla/mcpcost/issues" rel="noopener">open an issue</a> with its registry name.
   </p>
 
   <h2>Run it yourself</h2>
-  <pre>git clone https://github.com/ondraulehla/mcp-pulse
-cd mcp-pulse && npm install
+  <pre>git clone https://github.com/ondraulehla/mcpcost
+cd mcpcost && npm install
 npm run probe -- --sample 200 --per-host 2</pre>
 </Layout>

@@ -1,17 +1,17 @@
-# mcptop
+# mcpcost
 
-[![npm](https://img.shields.io/npm/v/mcptop)](https://www.npmjs.com/package/mcptop) [![CI](https://github.com/ondraulehla/mcp-pulse/actions/workflows/ci.yml/badge.svg)](https://github.com/ondraulehla/mcp-pulse/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/mcptop)](LICENSE)
+[![npm](https://img.shields.io/npm/v/mcpcost)](https://www.npmjs.com/package/mcpcost) [![CI](https://github.com/ondraulehla/mcpcost/actions/workflows/ci.yml/badge.svg)](https://github.com/ondraulehla/mcpcost/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/mcpcost)](LICENSE)
 
 **`top` for your MCP servers: how many tokens do their tool definitions cost before the first prompt?**
 
-mcptop is the CLI of [mcp-pulse](https://github.com/ondraulehla/mcp-pulse), the board that probes every remote server in the official MCP registry. The board tells you about servers out there. mcptop tells you about yours.
+mcpcost is the CLI of [mcpcost](https://github.com/ondraulehla/mcpcost), the board that probes every remote server in the official MCP registry. The board tells you about servers out there. mcpcost tells you about yours.
 
 Every MCP server you configure hands your agent its tool definitions at the start of each session. Those definitions are tokens, and you pay for them in every turn. This command starts each configured server, lists its tools and tells you what they cost.
 
 ```
-$ npx mcptop --config .mcp.json --tools 3
+$ npx mcpcost --config .mcp.json --tools 3
 
-mcptop 0.1.4 · tool definitions your agent loads before the first prompt
+mcpcost 0.2.0 · tool definitions your agent loads before the first prompt
   .mcp.json
 
   server      source     result               tools  tokens  of 200k
@@ -40,10 +40,10 @@ It reads the config files of Claude Code (`.mcp.json`, `~/.claude.json`), Claude
 ## Options
 
 ```
-mcptop [options]                 measure every server in the configs it can find
-mcptop --config <file>           measure one config file (repeatable)
-mcptop --url <url>               measure one remote server (repeatable)
-mcptop --stdio "<command args>"  measure one local server (repeatable)
+mcpcost [options]                 measure every server in the configs it can find
+mcpcost --config <file>           measure one config file (repeatable)
+mcpcost --url <url>               measure one remote server (repeatable)
+mcpcost --stdio "<command args>"  measure one local server (repeatable)
 
 --window <tokens>    context window for the percentages (default 200000)
 --budget <tokens>    exit with code 1 when the total is above this
@@ -55,34 +55,34 @@ mcptop --stdio "<command args>"  measure one local server (repeatable)
 --json               machine-readable output
 ```
 
-`--budget` makes it a CI check: commit your `.mcp.json`, run `npx mcptop --budget 30000` in the pipeline, and a pull request that adds a 40 000-token server fails.
+`--budget` makes it a CI check: commit your `.mcp.json`, run `npx mcpcost --budget 30000` in the pipeline, and a pull request that adds a 40 000-token server fails.
 
 ## As an MCP server
 
 ```json
-{ "mcpServers": { "mcptop": { "command": "npx", "args": ["-y", "mcptop", "mcp"] } } }
+{ "mcpServers": { "mcpcost": { "command": "npx", "args": ["-y", "mcpcost", "mcp"] } } }
 ```
 
-`mcptop mcp` serves the same measurements over stdio, so an agent can check a server before it is added to a config. Four tools: `measure_server` (a remote URL or a local command, probed now), `measure_config` (every server in a config file), `lookup_server` and `search_servers` (the public board, which probes the whole registry daily). With `ANTHROPIC_API_KEY` in the environment the counts are exact. The repository's `Dockerfile` builds the same server for containers.
+`mcpcost mcp` serves the same measurements over stdio, so an agent can check a server before it is added to a config. Four tools: `measure_server` (a remote URL or a local command, probed now), `measure_config` (every server in a config file), `lookup_server` and `search_servers` (the public board, which probes the whole registry daily). With `ANTHROPIC_API_KEY` in the environment the counts are exact. The repository's `Dockerfile` builds the same server for containers.
 
 ## How tokens are counted
 
 Two ways.
 
-**Exact, with `--claude`.** mcptop asks the Anthropic `count_tokens` endpoint. It sends one request with the server's tools and one request without them. The difference is what the tools cost, as the model sees them. The endpoint is free and calls no model. It needs `ANTHROPIC_API_KEY` in the environment. You get two numbers: the tools as published, and the tools as Claude Code names them (`mcp__<server>__<tool>`, where `<server>` is the key in your config). The default model is `claude-opus-5-5`. `--budget` then applies to the exact total.
+**Exact, with `--claude`.** mcpcost asks the Anthropic `count_tokens` endpoint. It sends one request with the server's tools and one request without them. The difference is what the tools cost, as the model sees them. The endpoint is free and calls no model. It needs `ANTHROPIC_API_KEY` in the environment. You get two numbers: the tools as published, and the tools as Claude Code names them (`mcp__<server>__<tool>`, where `<server>` is the key in your config). The default model is `claude-opus-5-5`. `--budget` then applies to the exact total.
 
 ```bash
-ANTHROPIC_API_KEY=sk-ant-… npx mcptop --claude
+ANTHROPIC_API_KEY=sk-ant-… npx mcpcost --claude
 ```
 
 **Estimate, by default.** Each tool is serialised as compact JSON with `name`, `description` and `input_schema`, and counted with the `o200k_base` tokenizer. No key is needed. The exact Claude count is about 1.9 times this estimate at the median, because Claude renders schemas in its own format and tokenises prose in its own way. The estimate is the same for every server, so servers stay comparable.
 
-The [public board](https://mcp-pulse.ulehla.dev) shows both numbers for every remote server in the official registry.
+The [public board](https://mcpcost.ulehla.dev) shows both numbers for every remote server in the official registry.
 
 ## Library
 
 ```ts
-import { probeRemote, probeStdio, discoverConfigs } from 'mcptop';
+import { probeRemote, probeStdio, discoverConfigs } from 'mcpcost';
 
 const r = await probeRemote(
   { url: 'https://mcp.deepwiki.com/mcp', type: 'streamable-http' },

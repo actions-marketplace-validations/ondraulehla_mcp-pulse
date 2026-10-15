@@ -2,7 +2,7 @@
 import '@fontsource/anton/latin.css';
 import antonWoff2 from '@fontsource/anton/files/anton-latin-400-normal.woff2?url';
 import Emblem from '../components/Emblem.astro';
-import PulseMark from '../components/PulseMark.astro';
+import CostMark from '../components/CostMark.astro';
 
 interface Props {
   title: string;
@@ -39,7 +39,7 @@ const canonical = new URL(path + Astro.url.search, Astro.site ?? Astro.url).toSt
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title === 'mcp-pulse' ? 'mcp-pulse' : `${title} · mcp-pulse`}</title>
+    <title>{title === 'mcpcost' ? 'mcpcost' : `${title} · mcpcost`}</title>
     <script is:inline>
       // Before paint: the stored choice, else the system setting. No flash of the wrong theme.
       (function () {
@@ -49,7 +49,7 @@ const canonical = new URL(path + Astro.url.search, Astro.site ?? Astro.url).toSt
       })();
     </script>
     <meta name="description" content={description} />
-    <link rel="alternate" type="application/atom+xml" title={feed?.title ?? 'mcp-pulse: what changed'} href={feed?.href ?? '/changes.xml'} />
+    <link rel="alternate" type="application/atom+xml" title={feed?.title ?? 'mcpcost: what changed'} href={feed?.href ?? '/changes.xml'} />
     {robots && <meta name="robots" content={robots} />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -64,9 +64,9 @@ const canonical = new URL(path + Astro.url.search, Astro.site ?? Astro.url).toSt
   </head>
   <body>
     <header class="band">
-      <a href="/" class="brand cell" aria-label="mcp-pulse home">
-        <PulseMark class="mark" />
-        <span class="wordmark">mcp-pulse</span>
+      <a href="/" class="brand cell" aria-label="mcpcost home">
+        <CostMark class="mark" />
+        <span class="wordmark">mcpcost</span>
       </a>
       <script is:inline>
         // The trace runs to the end once started; a new hover waits for it to finish.
@@ -75,15 +75,16 @@ const canonical = new URL(path + Astro.url.search, Astro.site ?? Astro.url).toSt
           var mark = brand && brand.querySelector('.mark');
           if (!mark) return;
           brand.addEventListener('pointerenter', function () { mark.classList.add('play'); });
-          mark.addEventListener('animationend', function () { mark.classList.remove('play'); });
+          var ended = 0;
+          mark.addEventListener('animationend', function () { if (++ended >= 3) { ended = 0; mark.classList.remove('play'); } });
         })();
       </script>
       <nav aria-label="Main" class="cells">
         {nav.map(([href, text]) => (
           <a href={href} class="cell cell-flood" aria-current={path === href || (href !== '/' && path.startsWith(href)) ? 'page' : undefined}>{text}</a>
         ))}
-        <a href="https://github.com/ondraulehla/mcp-pulse" rel="noopener" class="cell cell-flood">GitHub</a>
-        <a href="https://www.npmjs.com/package/mcptop" rel="noopener" class="cell cell-flood wide">npx mcptop</a>
+        <a href="https://github.com/ondraulehla/mcpcost" rel="noopener" class="cell cell-flood">GitHub</a>
+        <a href="https://www.npmjs.com/package/mcpcost" rel="noopener" class="cell cell-flood wide">npx mcpcost</a>
         <button type="button" class="cell cell-flood theme-toggle" data-theme-toggle aria-label="Switch between light and dark" title="Light / dark">
           <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
           <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
@@ -107,8 +108,8 @@ const canonical = new URL(path + Astro.url.search, Astro.site ?? Astro.url).toSt
       </a>
       <p class="note">Probed each day. Exact token counts from the Anthropic count_tokens endpoint. To exclude a server, open an issue.</p>
       <nav aria-label="Footer" class="cells">
-        <a href="https://github.com/ondraulehla/mcp-pulse" rel="noopener" class="cell cell-flood">GitHub</a>
-        <a href="https://www.npmjs.com/package/mcptop" rel="noopener" class="cell cell-flood">npm</a>
+        <a href="https://github.com/ondraulehla/mcpcost" rel="noopener" class="cell cell-flood">GitHub</a>
+        <a href="https://www.npmjs.com/package/mcpcost" rel="noopener" class="cell cell-flood">npm</a>
         <a href="https://ulehla.dev" rel="me noopener" class="cell cell-flood">ulehla.dev</a>
       </nav>
     </footer>
@@ -264,18 +265,18 @@ const canonical = new URL(path + Astro.url.search, Astro.site ?? Astro.url).toSt
   .wordmark { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; }
   .brand .wordmark { font-size: 1.05rem; letter-spacing: 0.2em; }
   .emblem { width: 2.1rem; height: 2.1rem; color: var(--accent); }
-  /* the mark: orange at rest; .play runs one full trace (draw in ink, then fade back to orange) */
-  .mark { width: 2.1rem; height: 2.1rem; }
-  .mark .base { stroke: var(--accent); }
-  .mark .trace { stroke: var(--ink); stroke-dasharray: 100; stroke-dashoffset: 100; opacity: 0; }
+  /* the mark: three orange bars at rest; .play grows them from the baseline once */
+  .mark { width: 2.1rem; height: 2.1rem; color: var(--accent); }
+  .mark .bar { transform-origin: 50% 27px; }
   @media (prefers-reduced-motion: no-preference) {
-    .mark.play .trace { animation: pulse-trace 1.3s cubic-bezier(0.4, 0, 0.2, 1) 1 both; }
+    .mark.play .bar { animation: cost-grow 0.9s cubic-bezier(0.4, 0, 0.2, 1) 1 both; }
+    .mark.play .bar:nth-child(2) { animation-delay: 0.08s; }
+    .mark.play .bar:nth-child(3) { animation-delay: 0.16s; }
   }
-  @keyframes pulse-trace {
-    0% { stroke-dashoffset: 100; opacity: 1; }
-    55% { stroke-dashoffset: 0; opacity: 1; }
-    70% { stroke-dashoffset: 0; opacity: 1; }
-    100% { stroke-dashoffset: 0; opacity: 0; }
+  @keyframes cost-grow {
+    0% { transform: scaleY(0.15); }
+    60% { transform: scaleY(1.06); }
+    100% { transform: scaleY(1); }
   }
   .emblem.small { width: 1.4rem; height: 1.4rem; }
   .cell-flood:hover, .cell-flood:focus-visible { color: var(--surface); background: var(--ink); }
