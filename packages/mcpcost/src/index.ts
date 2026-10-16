@@ -12,3 +12,5 @@ export type { ToolLike } from './tokens.js';
 export { countClaudeTokens, countForServer, claudeCodePrefix, toApiTools, createLimiter, ClaudeCountError, CLAUDE_MODEL } from './claude.js';
 export type { ClaudeCountOptions, ClaudeCount, Limiter } from './claude.js';
 export type * from './types.js';
+export { GATED_STATUSES } from './types.js';
+export { buildServer } from './mcp.js';

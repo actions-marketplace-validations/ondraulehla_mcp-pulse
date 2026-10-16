@@ -8,7 +8,7 @@ export const GET: APIRoute = async ({ params, site }) => {
   const server = name ? await getServer(name) : null;
   if (!server) return Response.json({ error: 'unknown server', name }, { status: 404 });
   const history = await getHistory(name, 30);
-  const base = (site ?? new URL('https://mcp-pulse.ulehla.dev')).toString().replace(/\/$/, '');
+  const base = (site ?? new URL('https://mcpcost.ulehla.dev')).toString().replace(/\/$/, '');
   return Response.json(
     {
       name: server.name,

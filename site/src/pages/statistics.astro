@@ -24,8 +24,8 @@ const topHeavy = run ? run.heaviest.slice(0, 12) : [];
 const heavyMax = Math.max(1, ...topHeavy.map((h) => h.claudeTokens ?? h.toolsTokens));
 ---
 
-<Layout title="Statistics" description="Results, token costs, protocols, auth and publishers of every remote server in the MCP registry, as charts with a table under each.">
-  <p class="kicker">{run ? `${num(run.probed)} remote servers · probed ${date(run.probedAt)}` : ''}</p>
+<Layout title="Statistics" description="Results, token costs, protocols, auth and publishers of every remote and package server in the MCP registry, as charts with a table under each.">
+  <p class="kicker">{run ? `${num(run.probed)} servers · probed ${date(run.probedAt)}` : ''}</p>
   <h1 class="poster">Statistics</h1>
 
   {!run && <p class="frame pad">No run imported yet.</p>}
@@ -33,7 +33,7 @@ const heavyMax = Math.max(1, ...topHeavy.map((h) => h.claudeTokens ?? h.toolsTok
     <>
       <div class="stats">
         <div class="stat"><b>{num(run.registryEntries)}</b><span>registry entries, latest versions</span></div>
-        <div class="stat"><b>{num(run.probed)}</b><span>with a remote endpoint, probed</span></div>
+        <div class="stat"><b>{num(run.probed)}</b><span>probed: {num(run.probed - (run.stdioProbed ?? 0))} remote, {num(run.stdioProbed ?? 0)} npm and PyPI packages</span></div>
         <div class="stat"><b>{num(run.hosts)}</b><span>hosts</span></div>
         <div class="stat"><b>{num(run.uniqueToolsets)}</b><span>distinct tool sets among alive servers</span></div>
         <div class="stat"><b>{num(run.duplicateServers)}</b><span>alive servers that copy another tool set</span></div>
@@ -44,7 +44,7 @@ const heavyMax = Math.max(1, ...topHeavy.map((h) => h.claudeTokens ?? h.toolsTok
       <p class="muted small">What every probed server answered. Hover a segment or a bar for the count, or open the table.</p>
       <Stack id="results-stack" segments={[
         { label: 'alive', value: run.ok, tone: 'up', href: '/servers?status=ok' },
-        { label: 'needs auth or payment', value: gated, tone: 'gated', href: '/servers?status=auth' },
+        { label: 'needs auth, payment, env or args', value: gated, tone: 'gated', href: '/servers?status=auth' },
         { label: 'down or broken', value: down, tone: 'down', href: '/servers?status=down' }
       ]} />
       <Bars id="results-bars" items={statusItems} columns={['Result', 'Servers']} />

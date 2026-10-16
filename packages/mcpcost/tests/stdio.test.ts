@@ -24,7 +24,7 @@ describe('probeStdio', () => {
   });
 
   it('reports a missing command', async () => {
-    const r = await probeStdio({ command: 'definitely-not-a-command-mcp-pulse' }, { timeoutMs: 5_000 });
+    const r = await probeStdio({ command: 'definitely-not-a-command-mcpcost' }, { timeoutMs: 5_000 });
     expect(r.status).toBe('not_found');
     expect(r.error).toContain('command not found');
   });

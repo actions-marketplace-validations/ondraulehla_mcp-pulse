@@ -5,4 +5,4 @@ Allow: /
 Disallow: /servers?
 Disallow: /api/
 Disallow: /check?
-Sitemap: https://mcp-pulse.ulehla.dev/sitemap.xml
+Sitemap: https://mcpcost.ulehla.dev/sitemap.xml

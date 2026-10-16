@@ -10,8 +10,8 @@ import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import type { jsonSchemaValidator, JsonSchemaValidator, JsonSchemaValidatorResult } from '@modelcontextprotocol/sdk/validation/types.js';
 import type { ProbeResult, ProbeStatus, RemoteTransport } from './types.js';
 
-export const VERSION = '0.1.3';
-export const USER_AGENT = `mcp-pulse/${VERSION} (mcptop; +https://github.com/ondraulehla/mcp-pulse)`;
+export const VERSION = '0.2.0';
+export const USER_AGENT = `mcpcost/${VERSION} (mcpcost; +https://github.com/ondraulehla/mcpcost)`;
 
 export interface RawTool {
   name: string;
@@ -113,7 +113,7 @@ const noValidation: jsonSchemaValidator = {
 };
 
 export async function measure(transport: Transport, result: ProbeResult, timeoutMs: number): Promise<RawTool[]> {
-  const client = new Client({ name: 'mcp-pulse', version: VERSION }, { capabilities: {}, jsonSchemaValidator: noValidation });
+  const client = new Client({ name: 'mcpcost', version: VERSION }, { capabilities: {}, jsonSchemaValidator: noValidation });
   let timer: ReturnType<typeof setTimeout> | undefined;
   const deadline = new Promise<never>((_, reject) => {
     timer = setTimeout(() => reject(Object.assign(new Error(`probe timed out after ${timeoutMs} ms`), { name: 'TimeoutError' })), timeoutMs);

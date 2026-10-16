@@ -42,7 +42,7 @@ export const GET: APIRoute = async ({ params }) => {
       text = label(server.status);
     }
   }
-  return new Response(badge('mcp-pulse', text, color), {
+  return new Response(badge('mcpcost', text, color), {
     status: 200,
     headers: {
       'content-type': 'image/svg+xml; charset=utf-8',

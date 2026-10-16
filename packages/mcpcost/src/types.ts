@@ -63,7 +63,17 @@ export type ProbeStatus =
   | 'dns'
   | 'tls'
   | 'refused'
-  | 'error';
+  | 'error'
+  // package (stdio) servers only
+  | 'install_failed'
+  | 'no_bin'
+  | 'needs_env'
+  | 'needs_args'
+  | 'needs_network'
+  | 'crashed';
+
+/** Reachable but not usable without something from the user: credentials, arguments, a network, or a newer SDK. */
+export const GATED_STATUSES: ReadonlySet<string> = new Set(['auth', 'payment', 'newer_protocol', 'needs_env', 'needs_args', 'needs_network']);
 
 export interface ToolCost {
   name: string;

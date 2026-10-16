@@ -17,7 +17,7 @@ Astro.response.headers.set('cache-control', 'public, max-age=300, s-maxage=10800
 const capabilities = server.capabilities ? (JSON.parse(server.capabilities) as string[]) : [];
 const topTools = server.top_tools ? (JSON.parse(server.top_tools) as Array<{ name: string; tokens: number }>) : [];
 const site = Astro.site?.toString().replace(/\/$/, '') ?? '';
-const badgeMd = `[![mcp-pulse](${site}/badge/${name}.svg)](${site}/s/${name})`;
+const badgeMd = `[![mcpcost](${site}/badge/${name}.svg)](${site}/s/${name})`;
 const reachable = history.filter((h) => h.status === 'ok' || h.status === 'auth' || h.status === 'payment').length;
 const heading = server.title ?? server.server_name ?? name;
 const ok = server.status === 'ok';
@@ -60,11 +60,11 @@ const jsonld = {
     ...(server.protocol_version ? [{ '@type': 'PropertyValue', name: 'MCP protocol version', value: server.protocol_version }] : [])
   ],
   dateModified: server.claude_measured_at && server.claude_measured_at > server.probed_at ? server.claude_measured_at : server.probed_at,
-  isPartOf: { '@type': 'Dataset', name: 'mcp-pulse: health and token cost of the MCP registry', url: site, license: 'https://opensource.org/license/mit' }
+  isPartOf: { '@type': 'Dataset', name: 'mcpcost: health and token cost of the MCP registry', url: site, license: 'https://opensource.org/license/mit' }
 };
 ---
 
-<Layout title={pageTitle} description={answer} jsonld={jsonld} feed={{ href: `/s/${name}.xml`, title: `${name} on mcp-pulse` }}>
+<Layout title={pageTitle} description={answer} jsonld={jsonld} feed={{ href: `/s/${name}.xml`, title: `${name} on mcpcost` }}>
   <p class="kicker mono">{name}</p>
   <h1 class="poster">{heading}</h1>
   {server.description && <p class="lede">{server.description}</p>}
@@ -88,7 +88,9 @@ const jsonld = {
   {server.status !== 'ok' && server.error && <pre>{server.error}</pre>}
 
   <dl class="facts">
-    <dt>Endpoint</dt><dd class="mono">{server.url} <span class="faint">({server.transport})</span></dd>
+    {server.transport === 'stdio'
+      ? <><dt>Run it</dt><dd class="mono">{server.url.startsWith('npm:') ? `npx -y ${server.url.slice(4)}` : `uvx ${server.url.slice(5)}`} <span class="faint">(stdio, probed in a container with the network off)</span></dd></>
+      : <><dt>Endpoint</dt><dd class="mono">{server.url} <span class="faint">({server.transport})</span></dd></>}
     <dt>Host</dt><dd><a class="mono" href={`/servers?host=${encodeURIComponent(server.host)}`}>{server.host}</a></dd>
     {server.protocol_version && <><dt>Protocol</dt><dd class="mono">{server.protocol_version}</dd></>}
     {server.server_name && <><dt>Reports itself as</dt><dd>{server.server_name} {server.server_version}</dd></>}
@@ -147,7 +149,7 @@ const jsonld = {
   )}
 
   <h2>Badge and feed</h2>
-  <p><img src={`/badge/${name}.svg`} alt={`mcp-pulse: ${label(server.status)}`} height="20" /></p>
+  <p><img src={`/badge/${name}.svg`} alt={`mcpcost: ${label(server.status)}`} height="20" /></p>
   <pre>{badgeMd}</pre>
   <p class="muted small">An entry for every probe that changed the result, the tool count or the token cost: <a href={`/s/${name}.xml`}>Atom feed</a>. Add it to a feed reader or a Slack RSS app to hear when the server stops answering or its tool set grows.</p>
 </Layout>

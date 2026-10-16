@@ -1,3 +1,5 @@
+import { GATED_STATUSES } from '../../../packages/mcpcost/src/types.ts';
+
 export const STATUS_LABEL: Record<string, string> = {
   ok: 'alive',
   auth: 'needs auth',
@@ -11,13 +13,19 @@ export const STATUS_LABEL: Record<string, string> = {
   dns: 'no DNS',
   tls: 'TLS error',
   refused: 'refused',
-  error: 'error'
+  error: 'error',
+  install_failed: 'install failed',
+  no_bin: 'no executable',
+  needs_env: 'needs env',
+  needs_args: 'needs args',
+  needs_network: 'needs network',
+  crashed: 'crashed on start'
 };
 
 /** Three buckets for colours and filters. */
 export function bucket(status: string): 'up' | 'gated' | 'down' {
   if (status === 'ok') return 'up';
-  if (status === 'auth' || status === 'payment' || status === 'newer_protocol') return 'gated';
+  if (GATED_STATUSES.has(status)) return 'gated';
   return 'down';
 }
 

@@ -48,6 +48,12 @@ jobs:
             if gh run download "$id" --name "claude-cache-$id" --dir data/cache 2>/dev/null; then echo "count cache from run $id"; break; fi
           done
           c=$(find data/cache -name servers.json | head -1); test -n "$c" && { [ "$c" = data/cache/servers.json ] || cp "$c" data/cache/servers.json; } || { test -f data/previous/servers.json && cp data/previous/servers.json data/cache/servers.json && echo "count cache from the previous run" || echo "::notice::No count cache found."; }
+          # The newest finished stdio run: package servers probed in containers, no token counts yet.
+          mkdir -p data/stdio
+          for id in $(gh run list --workflow "Package servers (stdio)" --status success --limit 5 --json databaseId -q '.[].databaseId'); do
+            if gh run download "$id" --name "stdio-$id" --dir data/stdio 2>/dev/null; then echo "stdio run $id"; break; fi
+          done
+          s=$(find data/stdio -name stdio-run.json | head -1); test -n "$s" && { [ "$s" = data/stdio/stdio-run.json ] || cp "$s" data/stdio/stdio-run.json; } || echo "::notice::No stdio run found."
       - name: Probe the registry
         run: |
           if [ -n "${{ inputs.sample }}" ]; then
@@ -55,12 +61,16 @@ jobs:
           else
             npm run probe --silent -- --all --concurrency 24 --out data/raw/probe-run.json --claude-cache data/cache/servers.json
           fi
+      - name: Count the tools of the stdio run
+        if: ${{ hashFiles('data/stdio/stdio-run.json') != '' }}
+        run: node --import tsx probe/count-tools.ts --in data/stdio/stdio-run.json --cache data/cache/servers.json --deadline-min 40
       - name: Build the site data and the D1 import
         run: |
+          stdio=""; [ -f data/stdio/stdio-run.json ] && stdio="--stdio data/stdio/stdio-run.json"
           if [ -f data/previous/servers.json ]; then
-            node --import tsx probe/build-data.ts --in data/raw/probe-run.json --out data/latest --previous data/previous/servers.json
+            node --import tsx probe/build-data.ts --in data/raw/probe-run.json --out data/latest --previous data/previous/servers.json $stdio
           else
-            node --import tsx probe/build-data.ts --in data/raw/probe-run.json --out data/latest
+            node --import tsx probe/build-data.ts --in data/raw/probe-run.json --out data/latest $stdio
           fi
           if [ -f data/previous/servers.json ]; then
             node --import tsx probe/to-sql.ts --in data/latest --out data/latest/import.sql --previous data/previous/servers.json --previous-hosts data/previous/hosts.json

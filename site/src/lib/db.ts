@@ -1,4 +1,5 @@
 import { env } from 'cloudflare:workers';
+import { GATED_STATUSES } from '../../../packages/mcpcost/src/types.ts';
 
 export interface ServerRecord {
   name: string;
@@ -94,6 +95,10 @@ export interface RunSummary {
   initMs: { median: number; p90: number };
   hosts: number;
   heaviest: Array<{ name: string; toolCount: number; toolsTokens: number; claudeTokens?: number; claudeTokensCc?: number; host: string }>;
+  /** Package (stdio) servers on the board, and how many of them this run probed. */
+  stdioProbed?: number;
+  stdioToday?: number;
+  registryWithPackage?: number;
   /** What changed since the previous run; absent on the first run. */
   changes?: {
     since: string;
@@ -329,7 +334,7 @@ export async function listServers(query: ListQuery): Promise<ListResult> {
     binds.push(match);
   }
   if (query.status === 'down') {
-    where.push("status NOT IN ('ok', 'auth', 'payment', 'newer_protocol')");
+    where.push(`status NOT IN ('ok', ${[...GATED_STATUSES].map((s) => `'${s}'`).join(', ')})`);
   } else if (query.status) {
     where.push('status = ?');
     binds.push(query.status);
@@ -342,7 +347,7 @@ export async function listServers(query: ListQuery): Promise<ListResult> {
     where.push('protocol_version = ?');
     binds.push(query.protocol);
   }
-  if (query.transport === 'sse' || query.transport === 'streamable-http') {
+  if (query.transport === 'sse' || query.transport === 'streamable-http' || query.transport === 'stdio') {
     where.push('transport = ?');
     binds.push(query.transport);
   }

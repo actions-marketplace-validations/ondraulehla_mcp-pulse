@@ -1,4 +1,4 @@
-name: 'mcptop: token budget for MCP servers'
+name: 'MCPCost: token budget for MCP servers'
 description: 'Token cost of the MCP servers in your config: a job summary per server, and a failed job above a budget.'
 author: 'Ondřej Úlehla'
 branding:
@@ -30,7 +30,7 @@ inputs:
     required: false
     default: 'false'
   version:
-    description: 'mcptop version to run.'
+    description: 'mcpcost version to run.'
     required: false
     default: 'latest'
 outputs:
@@ -63,16 +63,16 @@ runs:
         [ "$INPUT_CLAUDE" = "true" ] && args+=(--claude)
         [ "$INPUT_NO_STDIO" = "true" ] && args+=(--no-stdio)
         args+=(--window "$INPUT_WINDOW" --tools "$INPUT_TOOLS" --json)
-        npx -y "mcptop@$INPUT_VERSION" "${args[@]}" > mcptop.json
-        node "$GITHUB_ACTION_PATH/.github/actions/summary.mjs" mcptop.json "$INPUT_BUDGET" >> "$GITHUB_STEP_SUMMARY"
-        total=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("mcptop.json","utf8")).total.tokens)')
-        servers=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("mcptop.json","utf8")).total.servers)')
+        npx -y "mcpcost@$INPUT_VERSION" "${args[@]}" > mcpcost.json
+        node "$GITHUB_ACTION_PATH/.github/actions/summary.mjs" mcpcost.json "$INPUT_BUDGET" >> "$GITHUB_STEP_SUMMARY"
+        total=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("mcpcost.json","utf8")).total.tokens)')
+        servers=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("mcpcost.json","utf8")).total.servers)')
         echo "tokens=$total" >> "$GITHUB_OUTPUT"
         echo "servers=$servers" >> "$GITHUB_OUTPUT"
         over=false
         if [ -n "$INPUT_BUDGET" ] && [ "$total" -gt "$INPUT_BUDGET" ]; then over=true; fi
         echo "over-budget=$over" >> "$GITHUB_OUTPUT"
-        echo "mcptop: $servers servers, $total tokens$( [ -n "$INPUT_BUDGET" ] && echo ", budget $INPUT_BUDGET" )"
+        echo "mcpcost: $servers servers, $total tokens$( [ -n "$INPUT_BUDGET" ] && echo ", budget $INPUT_BUDGET" )"
         if [ "$over" = true ]; then
           echo "::error title=MCP token budget::The tool definitions cost $total tokens, the budget is $INPUT_BUDGET."
           exit 1

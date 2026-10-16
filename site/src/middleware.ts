@@ -25,7 +25,7 @@ function ttlOf(response: Response): number {
   return m ? Number(m[1]) : 0;
 }
 
-const CANONICAL_HOST = 'mcp-pulse.ulehla.dev';
+const CANONICAL_HOST = 'mcpcost.ulehla.dev';
 
 /** Seconds until the next midnight UTC, when the D1 free tier counters reset. */
 function secondsToMidnightUtc(): number {
@@ -41,17 +41,17 @@ function limitResponse(url: URL, message: string): Response {
     return Response.json({ error: 'The database read budget for today is spent. The board is back at 00:00 UTC.', retryAfterSeconds: retry, detail: message.slice(0, 160) }, { status: 503, headers });
   }
   const minutes = Math.round(retry / 60);
-  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta name="robots" content="noindex"><title>Back at 00:00 UTC · mcp-pulse</title>
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta name="robots" content="noindex"><title>Back at 00:00 UTC · mcpcost</title>
 <style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#120f0c;color:#eee7d8;font:16px/1.5 system-ui,sans-serif}main{max-width:36rem;padding:32px}h1{font-size:1.4rem;margin:0 0 12px}p{margin:8px 0;color:#b8ae9c}a{color:#e8571f}code{color:#eee7d8}</style></head>
-<body><main><h1>The board is resting until 00:00 UTC</h1><p>The free database tier allows a fixed number of row reads a day, and today's budget is spent. Pages are back in about ${minutes} minutes.</p><p>Until then: <a href="https://www.npmjs.com/package/mcptop">npx mcptop</a> measures the servers in your own config, and the <a href="https://github.com/ondraulehla/mcp-pulse">repository</a> has the method and the data.</p></main></body></html>`;
+<body><main><h1>The board is resting until 00:00 UTC</h1><p>The free database tier allows a fixed number of row reads a day, and today's budget is spent. Pages are back in about ${minutes} minutes.</p><p>Until then: <a href="https://www.npmjs.com/package/mcpcost">npx mcpcost</a> measures the servers in your own config, and the <a href="https://github.com/ondraulehla/mcpcost">repository</a> has the method and the data.</p></main></body></html>`;
   return new Response(html, { status: 503, headers: { ...headers, 'content-type': 'text/html; charset=utf-8' } });
 }
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const { request } = context;
   const url = new URL(request.url);
-  // The workers.dev address stays as an alias and sends everyone to the real one.
-  if (url.hostname.endsWith('.workers.dev')) {
+  // The workers.dev address and the old mcp-pulse.ulehla.dev name stay as aliases and send everyone to the real one.
+  if (url.hostname.endsWith('.workers.dev') || (url.hostname.endsWith('.ulehla.dev') && url.hostname !== CANONICAL_HOST)) {
     url.hostname = CANONICAL_HOST;
     url.protocol = 'https:';
     url.port = '';

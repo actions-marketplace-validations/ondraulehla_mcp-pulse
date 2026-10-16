@@ -9,13 +9,14 @@ import { probeStdio } from './stdio.js';
 import { TOKENIZER } from './tokens.js';
 import type { ProbeResult } from './types.js';
 
-const HELP = `mcptop ${VERSION}: how many tokens do your MCP servers cost before the first prompt?
+const HELP = `mcpcost ${VERSION}: how many tokens do your MCP servers cost before the first prompt?
 
 Usage
-  mcptop [options]                 measure every server in the configs it can find
-  mcptop --config <file>           measure one config file (repeatable)
-  mcptop --url <url>               measure one remote server (repeatable)
-  mcptop --stdio "<command args>"  measure one local server (repeatable)
+  mcpcost [options]                 measure every server in the configs it can find
+  mcpcost mcp                       serve the same measurements as an MCP server over stdio
+  mcpcost --config <file>           measure one config file (repeatable)
+  mcpcost --url <url>               measure one remote server (repeatable)
+  mcpcost --stdio "<command args>"  measure one local server (repeatable)
 
 Options
   --window <tokens>    context window for the percentages (default 200000)
@@ -31,7 +32,7 @@ Options
 Config files it looks for: .mcp.json, ~/.claude.json, Claude Desktop, Cursor, VS Code, Windsurf, Gemini CLI.
 Without --claude, tokens are an estimate: ${TOKENIZER} over name, description and input schema of each tool.
 With --claude, the exact count for the model is shown too, as published and with the Claude Code mcp__<server>__ prefix.
-The same probe runs the public board at https://mcp-pulse.ulehla.dev`;
+The same probe runs the public board at https://mcpcost.ulehla.dev`;
 
 interface Row {
   name: string;
@@ -43,6 +44,11 @@ interface Row {
 }
 
 export async function main(argv: string[]): Promise<number> {
+  if (argv[0] === 'mcp') {
+    const { serveStdio } = await import('./mcp.js');
+    await serveStdio();
+    return new Promise(() => undefined);
+  }
   const { values } = parseArgs({
     args: argv,
     options: {
@@ -217,7 +223,7 @@ function statusText(r: Row): string {
 
 function render(rows: Row[], o: { window: number; total: number; totalTools: number; topTools: number; sources: string[]; exact: boolean; model: string; cost: (r: Row) => number | undefined }): string {
   const lines: string[] = [];
-  lines.push(`mcptop ${VERSION} · tool definitions your agent loads before the first prompt`);
+  lines.push(`mcpcost ${VERSION} · tool definitions your agent loads before the first prompt`);
   if (o.sources.length) lines.push(o.sources.map((s) => `  ${shortSource(s)}`).join('\n'));
   lines.push('');
   if (!rows.length) {

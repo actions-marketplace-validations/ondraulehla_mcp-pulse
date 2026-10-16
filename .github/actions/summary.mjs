@@ -1,4 +1,4 @@
-// Turns mcptop --json into a job summary table. Works with any mcptop version: fields it does not find stay empty.
+// Turns mcpcost --json into a job summary table. Works with any mcpcost version: fields it does not find stay empty.
 import { readFileSync } from 'node:fs';
 const [file, budget] = process.argv.slice(2);
 const r = JSON.parse(readFileSync(file, 'utf8'));
@@ -13,7 +13,7 @@ const rows = r.servers.map((s) => {
 const total = r.total.tokens;
 const over = budget && total > Number(budget);
 const lines = [
-  `## mcptop: ${fmt(total)} tokens of context before the first prompt`,
+  `## mcpcost: ${fmt(total)} tokens of context before the first prompt`,
   '',
   over ? `**Over budget.** The budget is ${fmt(Number(budget))} tokens.` : budget ? `Within the budget of ${fmt(Number(budget))} tokens.` : '',
   '',
@@ -38,6 +38,6 @@ lines.push(
     ? 'Exact counts from the Anthropic count_tokens endpoint. Other models tokenize differently.'
     : 'Estimate with the o200k_base tokenizer over name, description and input schema of each tool. Claude counts about 1.8 times more; set `claude: true` with `ANTHROPIC_API_KEY` for exact numbers.',
   '',
-  'Measured by [mcptop](https://github.com/ondraulehla/mcp-pulse). The board at [mcp-pulse.ulehla.dev](https://mcp-pulse.ulehla.dev) has the same numbers for every server in the MCP registry.'
+  'Measured by [mcpcost](https://github.com/ondraulehla/mcpcost). The board at [mcpcost.ulehla.dev](https://mcpcost.ulehla.dev) has the same numbers for every server in the MCP registry.'
 );
 console.log(lines.filter((l, i, a) => !(l === '' && a[i - 1] === '')).join('\n'));

@@ -12,4 +12,4 @@ data/latest/servers.json
 data/latest/hosts.json
 data/indexnow.env
 site/.dev.vars
-probe/stdio/mcptop-*.tgz
+probe/stdio/mcpcost-*.tgz
